@@ -39,7 +39,7 @@ const ContactSection = () => {
 
   const onSubmit = async (data) => {
   try {
-    const { data: response } = await axios.post("http://localhost:4000/api/contact", data);
+    const { data: response } = await axios.post("https://sanjay-portfolio-bcl4.onrender.com/api/contact", data);
 
     Swal.fire({
       title: "Message Sent!",
