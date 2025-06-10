@@ -77,17 +77,27 @@ const ProjectsSection = () => {
     {
       id: 3,
       title: 'Fake Client - AI Chatbot For Freelancers ',
-      category: 'Mobile Development',
+      category: 'Full-Stack Development',
+      description: 'AI-powered chatbot designed to assist freelancers in managing their projects and clients.',
+      image: 'fake-client.png',
+      tags: ['React', 'Node.js', 'MongoDB', 'Tailwind CSS', 'Express.js', 'TypeScript', 'Gen AI', 'OpenAI'],
+      status: 'In Development'
+    },
+        {
+      id: 4,
+      title: 'BrandWave - Design and Digital Agency',
+      category: 'Full-Stack Development',
       description: 'AI-powered chatbot designed to assist freelancers in managing their projects and clients.',
       image: 'fake-client.png',
       tags: ['React', 'Node.js', 'MongoDB', 'Tailwind CSS', 'Express.js', 'TypeScript', 'Gen AI', 'OpenAI'],
       status: 'In Development'
     }
+     
   ];
 
   return (
     <div ref={sectionRef} className="min-h-screen py-20 bg-secondary/30">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-reveal text-4xl md:text-6xl font-bold mb-6 text-gradient">
             Featured Projects
