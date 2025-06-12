@@ -132,7 +132,7 @@ const ContactSection = () => {
 
   return (
   <div ref={sectionRef} className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4 text-center relative z-10">
+      <div className="max-w-6xl mx-auto px-4  relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-reveal text-4xl md:text-6xl font-bold mb-6 text-gradient">
             Let's Work Together
