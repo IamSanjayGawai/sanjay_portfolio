@@ -74,8 +74,18 @@ const ProjectsSection = () => {
       tags: ['HTML', 'CSS', 'JavaScript', 'Tailwind CSS', 'Node.js', 'MongoDB', 'Hostinger', 'Render'],
       status: 'Completed'
     },
-    {
+         {
       id: 3,
+      title: 'BrandWave - Design and Digital Agency',
+      category: 'Full-Stack Development',
+      description: 'Designing & Digital Agency',
+      image: 'brandwave.png',
+      tags: ['React', 'Node.js', 'MongoDB', 'Tailwind CSS', 'Express.js', 'TypeScript', 'Gen AI', 'OpenAI'],
+      status: 'Completed'
+    },
+     
+    {
+      id: 4,
       title: 'Fake Client - AI Chatbot For Freelancers ',
       category: 'Full-Stack Development',
       description: 'AI-powered chatbot designed to assist freelancers in managing their projects and clients.',
@@ -83,16 +93,7 @@ const ProjectsSection = () => {
       tags: ['React', 'Node.js', 'MongoDB', 'Tailwind CSS', 'Express.js', 'TypeScript', 'Gen AI', 'OpenAI'],
       status: 'In Development'
     },
-        {
-      id: 4,
-      title: 'BrandWave - Design and Digital Agency',
-      category: 'Full-Stack Development',
-      description: 'AI-powered chatbot designed to assist freelancers in managing their projects and clients.',
-      image: 'fake-client.png',
-      tags: ['React', 'Node.js', 'MongoDB', 'Tailwind CSS', 'Express.js', 'TypeScript', 'Gen AI', 'OpenAI'],
-      status: 'In Development'
-    }
-     
+   
   ];
 
   return (

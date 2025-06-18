@@ -29,6 +29,7 @@ if (project.status === 'In Development') {
 <WorkInProgress />
  
   );
+ 
 }
 
 

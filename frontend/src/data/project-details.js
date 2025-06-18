@@ -180,6 +180,62 @@ export const project_detail = [
 
   {
     id: 3,
+    title: "BrandWave - Design and Digital Agency",
+    category: "Landing Page",
+    description:
+      "Designing & Digital Agency ",
+    image: "brandwave.png",
+    tags: [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "Typescript",
+      "Tailwind CSS",
+      "Node.js",
+      "MongoDB",
+      "Hostinger",
+      "Render",
+    ],
+    status: "Completed",
+    liveUrl: "https://brandwave-cyan.vercel.app/",
+    githubUrl: "",
+    features: [
+      "Smooth user interaction and animations",
+      "Seamless user registration for courses",
+      "Interactive quizzes and assessments",
+      "Multipage website with multiple sections",
+      "Delivered with a modern, responsive design",
+      "Optimized for performance and SEO",
+      "Added Parallax effects for visual appeal",
+      "Integrated Google Maps for location-based services",
+    ],
+    technologies: {
+      Frontend: ["HTML", "CSS", "JavaScript", "Tailwind CSS"],
+      Backend: ["Node.js", "Express"],
+      Database: ["MongoDB", "Mongoose"],
+      Deployment: ["Hostinger", "Render"],
+    },
+    challenges: [
+  {
+    title: 'Mobile Responsiveness',
+    description: 'Users reported poor experience on mobile devices due to layout issues and slow load times.',
+    solution: 'Redesigned the frontend using Tailwind CSS and mobile-first design principles, improving UX across screen sizes.'
+  },
+  {
+    title: 'Deployment Challenges',
+    description: 'During initial deployment to platforms like Render, issues like environment variables, start commands, and build scripts caused repeated downtime.',
+    solution: 'Streamlined deployment with proper `.env` handling, fallback defaults, and standardized `start`/`build` scripts in `package.json`.'
+  }
+    ],
+    projectImages: [
+      { src: "/brandwave-hero.png", alt: "Home Page", name: "Home Page" },
+
+
+    ],
+  },
+  
+  {
+    id: 4,
     title: "Fake Clients - AI-Powered Client Generation",
     category: "Full-Stack Development",
     description:
@@ -196,7 +252,7 @@ export const project_detail = [
       "Render",
     ],
     status: "In Development",
-    liveUrl: "https://toadspcmc.com/",
+    liveUrl: "#",
     githubUrl: "",
     features: [
       "Smooth user interaction and animations",
