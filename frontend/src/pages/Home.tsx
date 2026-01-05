@@ -8,6 +8,7 @@ import AboutSection from '../components/sections/AboutSection';
 import ExperienceSection from '../components/sections/ExperienceSection';
 import ProjectsSection from '../components/sections/ProjectsSection';
 import ContactSection from '../components/sections/ContactSection';
+import Footer from '../components/Footer';
 import FloatingElements from '../components/FloatingElements';
 
 // Register GSAP plugins
@@ -134,6 +135,8 @@ const Home = () => {
           <ContactSection />
         </section>
       </div>
+      
+      <Footer />
     </div>
   );
 };

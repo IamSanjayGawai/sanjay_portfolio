@@ -131,44 +131,44 @@ const ContactSection = () => {
   ];
 
   return (
-  <div ref={sectionRef} className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4  relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-reveal text-4xl md:text-6xl font-bold mb-6 text-gradient">
+  <div ref={sectionRef} className="min-h-screen py-20 flex items-center justify-center relative overflow-hidden">
+      <div className="max-w-6xl mx-auto px-4 relative z-10 w-full">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-reveal text-4xl md:text-6xl font-bold mb-4 md:mb-6 text-gradient">
             Let's Work Together
           </h2>
-          <p className="text-reveal text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-reveal text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
             Have a project in mind? I'd love to hear about it and discuss how we
             can bring your ideas to life.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-16">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16">
           <div className="contact-form">
             <motion.form
-              className="space-y-6"
+              className="space-y-5 md:space-y-6"
               onSubmit={handleSubmit(onSubmit)}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                 <motion.div>
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium mb-2"
+                    className="block text-sm font-medium mb-2 text-foreground"
                   >
                     Name
                   </label>
                   <input
                     {...register("name", { required: "Name is required" })}
                     type="text"
-                    className="w-full px-4 py-3 bg-card border border-border rounded-lg"
+                    className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Your name"
                   />
                   {errors.name?.message &&
                     typeof errors.name.message === "string" && (
-                      <p className="text-red-500 text-sm">
+                      <p className="text-red-500 text-sm mt-1">
                         {errors.name.message}
                       </p>
                     )}
@@ -177,7 +177,7 @@ const ContactSection = () => {
                 <motion.div>
                   <label
                     htmlFor="email"
-                    className="block text-sm font-medium mb-2"
+                    className="block text-sm font-medium mb-2 text-foreground"
                   >
                     Email
                   </label>
@@ -190,12 +190,12 @@ const ContactSection = () => {
                       },
                     })}
                     type="email"
-                    className={`w-full px-4 py-3 bg-card border border-border rounded-lg`}
+                    className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="your@email.com"
                   />
                   {errors.email?.message &&
                     typeof errors.email.message === "string" && (
-                      <p className="text-red-500 text-sm mt-1 ml-1">
+                      <p className="text-red-500 text-sm mt-1">
                         {errors.email.message}
                       </p>
                     )}
@@ -205,19 +205,19 @@ const ContactSection = () => {
               <motion.div>
                 <label
                   htmlFor="subject"
-                  className="block text-sm font-medium mb-2"
+                  className="block text-sm font-medium mb-2 text-foreground"
                 >
                   Subject
                 </label>
                 <input
                   {...register("subject", { required: "Subject is required" })}
                   type="text"
-                  className="w-full px-4 py-3 bg-card border border-border rounded-lg"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="Project inquiry"
                 />
                 {errors.subject?.message &&
                   typeof errors.subject.message === "string" && (
-                    <p className="text-red-500 text-sm">
+                    <p className="text-red-500 text-sm mt-1">
                       {errors.subject.message}
                     </p>
                   )}
@@ -226,19 +226,19 @@ const ContactSection = () => {
               <motion.div>
                 <label
                   htmlFor="message"
-                  className="block text-sm font-medium mb-2"
+                  className="block text-sm font-medium mb-2 text-foreground"
                 >
                   Message
                 </label>
                 <textarea
                   {...register("message", { required: "Message is required" })}
                   rows={6}
-                  className="w-full px-4 py-3 bg-card border border-border rounded-lg"
+                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                   placeholder="Tell me about your project..."
                 ></textarea>
                 {errors.message?.message &&
                   typeof errors.message.message === "string" && (
-                    <p className="text-red-500 text-sm">
+                    <p className="text-red-500 text-sm mt-1">
                       {errors.message.message}
                     </p>
                   )}
@@ -256,67 +256,69 @@ const ContactSection = () => {
             </motion.form>
           </div>
 
-          <div className="contact-info space-y-8">
+          <div className="contact-info space-y-6 md:space-y-8">
             <div>
-              <h3 className="text-2xl font-bold mb-6">Get In Touch</h3>
-              <p className="text-muted-foreground mb-8">
+              <h3 className="text-2xl font-bold mb-4 md:mb-6 text-foreground">Get In Touch</h3>
+              <p className="text-muted-foreground mb-6 md:mb-8 leading-relaxed">
                 I'm always interested in new opportunities and exciting
                 projects. Whether you have a question or just want to say hi,
                 feel free to reach out!
               </p>
             </div>
 
-            <div className="space-y-6">
-              <motion.div
-                className="flex items-center space-x-4"
-                whileHover={{ x: 10 }}
+            <div className="space-y-4 md:space-y-6">
+              <motion.a
+                href="mailto:sanjaygawai2022@gmail.com"
+                className="flex items-center space-x-4 p-3 rounded-lg hover:bg-secondary/50 transition-colors"
+                whileHover={{ x: 5 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
-                  <span className="text-primary">📧</span>
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <span className="text-primary text-xl">📧</span>
                 </div>
                 <div>
-                  <div className="font-semibold">Email</div>
-                  <div className="text-muted-foreground">
+                  <div className="font-semibold text-foreground">Email</div>
+                  <div className="text-muted-foreground text-sm">
                     sanjaygawai2022@gmail.com
                   </div>
                 </div>
-              </motion.div>
+              </motion.a>
 
-              <motion.div
-                className="flex items-center space-x-4"
-                whileHover={{ x: 10 }}
+              <motion.a
+                href="tel:+917720990081"
+                className="flex items-center space-x-4 p-3 rounded-lg hover:bg-secondary/50 transition-colors"
+                whileHover={{ x: 5 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
-                  <span className="text-primary">📱</span>
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <span className="text-primary text-xl">📱</span>
                 </div>
                 <div>
-                  <div className="font-semibold">Phone</div>
-                  <div className="text-muted-foreground">+91 7720990081</div>
+                  <div className="font-semibold text-foreground">Phone</div>
+                  <div className="text-muted-foreground text-sm">+91 7720990081</div>
                 </div>
-              </motion.div>
+              </motion.a>
 
               <motion.div
-                className="flex items-center space-x-4"
-                whileHover={{ x: 10 }}
+                className="flex items-center space-x-4 p-3 rounded-lg"
+                whileHover={{ x: 5 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
-                  <span className="text-primary">📍</span>
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <span className="text-primary text-xl">📍</span>
                 </div>
                 <div>
-                  <div className="font-semibold">Location</div>
-                  <div className="text-muted-foreground">
+                  <div className="font-semibold text-foreground">Location</div>
+                  <div className="text-muted-foreground text-sm">
                     Maharashtra, India
                   </div>
                 </div>
               </motion.div>
             </div>
 
-            <div className="pt-8">
-              <h4 className="font-semibold mb-4">Follow Me</h4>
-              <div className="flex space-x-4">
+            <div className="pt-6 md:pt-8">
+              <h4 className="font-semibold mb-4 text-foreground">Follow Me</h4>
+              <div className="flex gap-4">
                 {socials.map(({ Icon, name, href, color }) => (
                   <motion.a
                     key={name}

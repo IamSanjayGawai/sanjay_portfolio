@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import {project_detail} from '../data/project-details'
 import WorkInProgress from './WorkInProgress';
+import Footer from '../components/Footer';
 
 const ProjectDetail = () => {
   const { id } = useParams();
@@ -110,6 +111,9 @@ if (project.status === 'In Development') {
               src={project.image}
               alt={project.title}
               className="w-full h-auto object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/placeholder.svg';
+              }}
             />
           </motion.div>
         </div>
@@ -212,6 +216,9 @@ if (project.status === 'In Development') {
               src={image.src}
               alt={image.alt}
               className="w-full h-auto object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/placeholder.svg';
+              }}
             />
             <div className="p-4">
               <h3 className="text-lg text-center font-semibold">
@@ -225,7 +232,7 @@ if (project.status === 'In Development') {
   </div>
 </section>
 
-
+      <Footer />
     </div>
   );
 };

@@ -21,7 +21,7 @@ const AboutSection = () => {
 
         gsap.fromTo(
           text.querySelectorAll(".char"),
-          { opacity: 0, y: 30, rotationX: -45 },
+          { opacity: 0.3, y: 30, rotationX: -45 },
           {
             opacity: 1,
             y: 0,
@@ -43,7 +43,7 @@ const AboutSection = () => {
         gsap.fromTo(
           skill,
           {
-            opacity: 0,
+            opacity: 0.5,
             x: index % 2 === 0 ? -50 : 50,
             rotationY: index % 2 === 0 ? -20 : 20,
           },
@@ -83,7 +83,7 @@ const AboutSection = () => {
           <h2 className="text-reveal text-4xl md:text-6xl font-bold mb-6 text-gradient split-text">
             About Me
           </h2>
-          <p className="text-reveal text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-reveal text-xl text-foreground/80 max-w-3xl mx-auto">
             A passionate developer with 1.7+ years of experience creating
             innovative digital solutions
           </p>
@@ -94,10 +94,10 @@ const AboutSection = () => {
             <div className="text-reveal">
 
               {/* change below paragrapgh details in like  in best way that looks like profesional like color change hihlights  font size small icrease */}
-     <p className="text-base sm:text-lg leading-relaxed mb-6 text-muted-foreground">
-  <span className="text-primary font-semibold">Full-Stack Developer</span> with <span className="text-accent-foreground font-medium">1.7+ years</span> of experience building scalable web applications using <span className="text-accent-foreground">MERN Stack</span>, <span className="text-accent-foreground">TypeScript</span>, and modern technologies. I focus on developing <span className="text-primary font-medium">real-world solutions</span> with clean, efficient code and intuitive user experiences.
+     <p className="text-base sm:text-lg leading-relaxed mb-6 text-foreground/90">
+  <span className="text-primary font-semibold">Full-Stack Developer</span> with <span className="text-accent font-medium">1.7+ years</span> of experience building scalable web applications using <span className="text-accent">MERN Stack</span>, <span className="text-accent">TypeScript</span>, and modern technologies. I focus on developing <span className="text-primary font-medium">real-world solutions</span> with clean, efficient code and intuitive user experiences.
   <br /><br />
-  From <span className="text-accent-foreground">e-commerce platforms</span> to <span className="text-accent-foreground">AI-powered tools</span>, I've built full-featured projects including <span className="text-primary">real-time chat</span>, <span className="text-primary">secure payments</span>, <span className="text-primary">admin dashboards</span>, and more. Constantly learning and evolving, I strive to turn ideas into impactful digital products.
+  From <span className="text-accent">e-commerce platforms</span> to <span className="text-accent">AI-powered tools</span>, I've built full-featured projects including <span className="text-primary">real-time chat</span>, <span className="text-primary">secure payments</span>, <span className="text-primary">admin dashboards</span>, and more. Constantly learning and evolving, I strive to turn ideas into impactful digital products.
 </p>
 
             </div>
@@ -113,21 +113,21 @@ const AboutSection = () => {
         </div>
 
         <div className="space-y-10 mt-10 flex flex-col items-start">
-          <span className="font-semibold text-xl">My Approach:</span>
-          <ul className="text-lg leading-relaxed  flex  gap-5 flex-wrap">
-            <li className="border border-primary p-4 skill-item">
+          <span className="font-semibold text-xl text-foreground">My Approach:</span>
+          <ul className="text-lg leading-relaxed flex gap-5 flex-wrap">
+            <li className="border border-primary p-4 skill-item text-foreground bg-card/50 rounded-lg">
               🚀 Performance & Scalability
             </li>
-            <li className="border border-primary p-4 skill-item">
+            <li className="border border-primary p-4 skill-item text-foreground bg-card/50 rounded-lg">
               🎨 User Experience
             </li>
-            <li className="border border-primary p-4 skill-item">
+            <li className="border border-primary p-4 skill-item text-foreground bg-card/50 rounded-lg">
               🤖 AI & Automation
             </li>
-            <li className="border border-primary p-4 skill-item">
+            <li className="border border-primary p-4 skill-item text-foreground bg-card/50 rounded-lg">
               🧠 Problem-Solving
             </li>
-            <li className="border border-primary p-4 skill-item">
+            <li className="border border-primary p-4 skill-item text-foreground bg-card/50 rounded-lg">
               💡 Continuous Learning
             </li>
           </ul>
