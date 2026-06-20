@@ -1,140 +1,153 @@
-import { useRef, useEffect } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const stats = [
+  { value: '2.5+', label: 'Years Exp.' },
+  { value: '8+', label: 'Production Systems' },
+  { value: '500ms', label: 'Real-time Updates' },
+  { value: '100K+', label: 'Users Served' },
+];
+
 const AboutSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null); // 1. Added reference for the video
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Split text animation with better timing
-      gsap.utils.toArray(".split-text").forEach((text: any) => {
-        const chars = text.textContent.split("");
-        text.innerHTML = chars
-          .map(
-            (char: string) =>
-              `<span class="char">${char === " " ? "&nbsp;" : char}</span>`
-          )
-          .join("");
+      gsap.fromTo(
+        '.about-heading',
+        { opacity: 0, y: 60, skewY: 2 },
+        {
+          opacity: 1, y: 0, skewY: 0, duration: 0.8,
+          scrollTrigger: { trigger: '.about-heading', start: 'top 85%', toggleActions: 'play none none reverse' },
+        }
+      );
 
-        gsap.fromTo(
-          text.querySelectorAll(".char"),
-          { opacity: 0.3, y: 30, rotationX: -45 },
-          {
-            opacity: 1,
-            y: 0,
-            rotationX: 0,
-            duration: 0.6,
-            stagger: 0.03,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: text,
-              start: "top 75%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-      });
+      gsap.fromTo(
+        '.about-text',
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1, y: 0, duration: 0.6, stagger: 0.15,
+          scrollTrigger: { trigger: '.about-text', start: 'top 85%', toggleActions: 'play none none reverse' },
+        }
+      );
 
-      // Skills animation with section-based triggering
-      gsap.utils.toArray(".skill-item").forEach((skill: any, index: number) => {
-        gsap.fromTo(
-          skill,
-          {
-            opacity: 0.5,
-            x: index % 2 === 0 ? -50 : 50,
-            rotationY: index % 2 === 0 ? -20 : 20,
-          },
-          {
-            opacity: 1,
-            x: 0,
-            rotationY: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: "top 70%",
-              end: "bottom 30%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-      });
+      gsap.fromTo(
+        '.stat-card',
+        { opacity: 0, y: 40, scale: 0.9 },
+        {
+          opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.1, ease: 'back.out(1.7)',
+          scrollTrigger: { trigger: '.stat-card', start: 'top 85%', toggleActions: 'play none none reverse' },
+        }
+      );
+
+      // 2. Add ScrollTrigger specifically for the video playback
+      if (videoRef.current) {
+        ScrollTrigger.create({
+          trigger: videoRef.current,
+          start: 'top 80%', // Triggers when the top of the video hits 80% down the screen
+          onEnter: () => videoRef.current?.play(), // Plays when entering viewport
+          onLeave: () => videoRef.current?.pause(), // Pauses when scrolling past it
+          onEnterBack: () => videoRef.current?.play(), // Plays when scrolling back up to it
+          onLeaveBack: () => videoRef.current?.pause(), // Pauses when scrolling back up past it
+        });
+      }
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  const skills = [
-    "React & TypeScript",
-    "Node.js & Express",
-    "Python & Django",
-    "PostgreSQL & MongoDB",
-    "AWS & Docker",
-    "UI/UX Design",
-  ];
-
   return (
-    <div ref={sectionRef} className="min-h-screen py-20 bg-secondary/30">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-reveal text-4xl md:text-6xl font-bold mb-6 text-gradient split-text">
-            About Me
-          </h2>
-          <p className="text-reveal text-xl text-foreground/80 max-w-3xl mx-auto">
-            A passionate developer with 1.7+ years of experience creating
-            innovative digital solutions
-          </p>
+    <div ref={sectionRef} className="py-32 relative overflow-hidden">
+      {/* Section accent line */}
+
+
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Section label */}
+        <div className="mb-4">
+          <span className="font-mono text-xs text-cyber/60 tracking-[0.3em] uppercase">// About</span>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 items-center">
-          <div className="space-y-6">
-            <div className="text-reveal">
+        <h2 className="about-heading font-display text-4xl md:text-6xl text-bone mb-10">
+          The Engineer Behind{' '}
+          <span className="text-gradient-coral">The Systems</span>
+        </h2>
 
-              {/* change below paragrapgh details in like  in best way that looks like profesional like color change hihlights  font size small icrease */}
-     <p className="text-base sm:text-lg leading-relaxed mb-6 text-foreground/90">
-  <span className="text-primary font-semibold">Full-Stack Developer</span> with <span className="text-accent font-medium">1.7+ years</span> of experience building scalable web applications using <span className="text-accent">MERN Stack</span>, <span className="text-accent">TypeScript</span>, and modern technologies. I focus on developing <span className="text-primary font-medium">real-world solutions</span> with clean, efficient code and intuitive user experiences.
-  <br /><br />
-  From <span className="text-accent">e-commerce platforms</span> to <span className="text-accent">AI-powered tools</span>, I've built full-featured projects including <span className="text-primary">real-time chat</span>, <span className="text-primary">secure payments</span>, <span className="text-primary">admin dashboards</span>, and more. Constantly learning and evolving, I strive to turn ideas into impactful digital products.
-</p>
+        <div className="grid lg:grid-cols-5 gap-12 items-start">
+          {/* Left — Narrative */}
+          <div className="lg:col-span-3 space-y-5">
+            <p className="about-text font-body text-sm sm:text-base text-slate-600 leading-relaxed">
+              I’m <span className="text-coral font-semibold">Sanjay Gawai</span>, a <span className="text-cyber font-semibold">Technical Lead & Founding Engineer</span> built for high-scale platform lifecycles and rapid early-stage startup execution. I direct technical strategy, system architecture, and end-to-end production deployments—from secure fintech ecosystems and real-time WebRTC platforms to custom workflow automation engines built from scratch.
+            </p>
 
+            <div className="about-text space-y-3 pt-2">
+              <h4 className="font-display text-lg text-bone uppercase tracking-wider">My execution blueprint includes:</h4>
+              <ul className="space-y-2.5">
+                <li className="text-sm font-body text-slate-600 leading-relaxed flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-coral mt-2 flex-shrink-0" />
+                  <span>
+                    <strong className="text-coral font-semibold">Full-Stack Execution:</strong> Engineering responsive interfaces and high-performance mobile apps using React, Next.js, and React Native.
+                  </span>
+                </li>
+                <li className="text-sm font-body text-slate-600 leading-relaxed flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyber mt-2 flex-shrink-0" />
+                  <span>
+                    <strong className="text-cyber font-semibold">Robust Infrastructure:</strong> Architecting secure, scalable backend APIs, containerizing applications with Docker, and integrating critical fintech and payment gateways.
+                  </span>
+                </li>
+                <li className="text-sm font-body text-slate-600 leading-relaxed flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-coral mt-2 flex-shrink-0" />
+                  <span>
+                    <strong className="text-coral font-semibold">Workflow Automation:</strong> Deploying advanced workflow automations to maximize development velocity and operational efficiency.
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+
+          {/* Right — Profile image/video */}
+          <div className="lg:col-span-2 flex justify-center lg:justify-end">
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-lg bg-gradient-to-br from-coral/20 to-cyber/20 blur-sm" />
+              <video 
+                ref={videoRef} // 3. Attached the ref here
+                src="/itroduction.mp4"
+                loop
+                muted // 4. Muted is required for code-triggered autoplay in modern browsers
+                playsInline
+                controls
+                className="relative rounded-lg w-64 h-96 md:w-[14.5rem] md:h-[22.25rem] object-cover border border-border grayscale-0 hover:grayscale transition-all duration-700"
+              />
+              {/* Blueprint corner brackets */}
+              <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-cyber/40" />
+              <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-cyber/40" />
+              <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-coral/40" />
+              <div className="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-coral/40" />
             </div>
           </div>
-
-          <div className="flex justify-center items-center gap-6">
-            <img
-              src="profile-img.png"
-              alt="Sanjay Gawai"
-              className="rounded-lg  w-80 h-80 object-contain "
-            />
-          </div>
         </div>
 
-        <div className="space-y-10 mt-10 flex flex-col items-start">
-          <span className="font-semibold text-xl text-foreground">My Approach:</span>
-          <ul className="text-lg leading-relaxed flex gap-5 flex-wrap">
-            <li className="border border-primary p-4 skill-item text-foreground bg-card/50 rounded-lg">
-              🚀 Performance & Scalability
-            </li>
-            <li className="border border-primary p-4 skill-item text-foreground bg-card/50 rounded-lg">
-              🎨 User Experience
-            </li>
-            <li className="border border-primary p-4 skill-item text-foreground bg-card/50 rounded-lg">
-              🤖 AI & Automation
-            </li>
-            <li className="border border-primary p-4 skill-item text-foreground bg-card/50 rounded-lg">
-              🧠 Problem-Solving
-            </li>
-            <li className="border border-primary p-4 skill-item text-foreground bg-card/50 rounded-lg">
-              💡 Continuous Learning
-            </li>
-          </ul>
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="stat-card blueprint-card rounded-lg p-6 text-center"
+            >
+              <div className="font-display text-3xl md:text-4xl text-coral mb-1">
+                {stat.value}
+              </div>
+              <div className="font-mono text-xs text-slate-500 dark:text-slate-400 tracking-wider uppercase">
+                {stat.label}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-
-      
     </div>
   );
 };

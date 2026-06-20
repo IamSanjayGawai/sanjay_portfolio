@@ -741,4 +741,182 @@ export const project_detail = [
       { src: "/trustline-admin-partners.png", alt: "Trustline Admin Panel - Partner Management", name: "Trustline Admin Panel - Partners" },
     ],
   },
+  {
+    id: 10,
+    title: "DhanSource Capital — Channel Partner App",
+    category: "Mobile App Development · Fintech",
+    description:
+      "DhanSource Capital is a fintech company providing loan distribution services through channel partners. I built the Channel Partner mobile app using React Native (Expo), enabling partners to onboard customers, submit KYC documents, generate dynamic loan agreements as PDFs, and track loan disbursement status in real time. The app streamlines the entire loan lifecycle from lead capture to document signing and disbursement tracking.",
+    image: "/dhansource/dhansource-1.jpeg",
+    tags: [
+      "React Native",
+      "Expo",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "Socket.IO",
+      "pdf-lib",
+      "AWS S3",
+    ],
+    status: "Live on Play Store",
+    liveUrl: "https://play.google.com/store/apps/details?id=com.dhansourcecapital.partner&pcampaignid=web_share",
+    websiteUrl: "https://dhansourcecapital.com/Home",
+    githubUrl: "",
+    features: [
+      "Channel partner registration & onboarding flow",
+      "Customer lead capture with document upload (Aadhaar, PAN, etc.)",
+      "Automated KYC verification pipeline",
+      "Dynamic PDF agreement generation using pdf-lib with e-signature support",
+      "Real-time loan status tracking and notifications via Socket.IO",
+      "Admin panel for managing partners, leads, and disbursements",
+      "Multi-level role-based access control (Partner, RM, Admin)",
+      "Push notifications for loan status changes",
+      "Document storage & retrieval via AWS S3",
+      "Analytics dashboard for partner performance metrics",
+    ],
+    technologies: {
+      "Mobile App": [
+        "React Native (Expo)",
+        "Expo Router",
+        "React Hook Form",
+        "AsyncStorage",
+        "Expo Document Picker",
+        "Expo Camera",
+      ],
+      Backend: [
+        "Node.js",
+        "Express.js",
+        "JWT Authentication",
+        "Socket.IO",
+        "pdf-lib (PDF generation)",
+        "Multer (File uploads)",
+      ],
+      Database: ["MongoDB", "Mongoose"],
+      Cloud: ["AWS S3 (Document Storage)", "Firebase Cloud Messaging"],
+      Other: ["Git", "Postman", "Google Play Console", "VS Code"],
+    },
+    challenges: [
+      {
+        title: "Dynamic PDF Generation with E-Signatures",
+        description:
+          "Generating legally compliant loan agreement PDFs dynamically with partner and customer details pre-filled, including signature fields.",
+        solution:
+          "Used pdf-lib to programmatically construct PDF documents from templates, embedding dynamic text, images (signatures), and QR codes. The PDFs are generated server-side and stored on AWS S3 with secure access links.",
+      },
+      {
+        title: "Automated KYC Pipeline",
+        description:
+          "Building a reliable KYC document verification pipeline that handles multiple document types with validation and status tracking.",
+        solution:
+          "Implemented a multi-step KYC flow with document type validation, image quality checks, and status state machine (Pending → Under Review → Approved/Rejected) with real-time Socket.IO notifications to partners.",
+      },
+      {
+        title: "Offline-First Data Handling",
+        description:
+          "Partners often work in areas with poor connectivity, requiring the app to handle form data and document uploads gracefully offline.",
+        solution:
+          "Used AsyncStorage for local form data persistence and implemented a queue-based upload system that syncs documents when connectivity is restored, with conflict resolution for concurrent updates.",
+      },
+    ],
+    projectImages: [
+      { src: "/dhansource/dhansource-1.jpeg", alt: "DhanSource Partner App - Login", name: "Partner Login" },
+      { src: "/dhansource/dhansource-2.jpeg", alt: "DhanSource Partner App - Dashboard", name: "Partner Dashboard" },
+      { src: "/dhansource/dhansource-3.jpeg", alt: "DhanSource Partner App - KYC Flow", name: "KYC Document Flow" },
+      { src: "/dhansource/dhansource-4.jpeg", alt: "DhanSource Partner App - Loan Tracking", name: "Loan Status Tracking" },
+    ],
+  },
+  {
+    id: 11,
+    title: "RingBuzz - Social Economy Platform",
+    category: "Mobile App Development · WebRTC · FinTech",
+    description:
+      "RingBuzz is an innovative social economy platform built around a dual-token virtual ledger system and real-time communication. It allows users to connect via high-quality WebRTC 1-on-1 audio and video calls, exchange virtual gifts, and participate in a micro-economy. The platform secures all transactions through robust database-level constraints and Row-Level Security (RLS) triggers, ensuring absolute ledger integrity across recharge, gifting, and withdrawal operations.",
+    image: "/ringbuzz/WhatsApp Image 2026-06-19 at 4.05.56 PM.jpeg",
+    tags: [
+      "React Native",
+      "PostgreSQL",
+      "WebRTC",
+      "Redis",
+      "Supabase",
+      "GetStream SDK",
+    ],
+    status: "Completed",
+    liveUrl: "#",
+    githubUrl: "",
+    features: [
+      "1-on-1 audio and video calling powered by WebRTC and GetStream SDK",
+      "Dual-token virtual ledger economy for secure in-app transactions",
+      "Virtual gifting system during live interactions",
+      "Real-time ledger updates with transactions logged on Supabase",
+      "Row-Level Security (RLS) policies to prevent transaction fraud",
+      "Recharge and wallet management module",
+      "Streamlined withdrawal flow for content creators",
+      "Interactive and smooth UI built with React Native",
+      "High-performance messaging and notification system",
+    ],
+    technologies: {
+      "Mobile App": [
+        "React Native",
+        "Expo",
+        "TypeScript",
+        "Tailwind CSS",
+        "GetStream SDK",
+      ],
+      Backend: [
+        "Node.js",
+        "Express.js",
+        "Supabase (Serverless)",
+        "PostgreSQL RLS Triggers",
+      ],
+      Database: [
+        "PostgreSQL (Supabase)",
+        "Redis (Caching & Sessions)",
+      ],
+      "Real-Time": [
+        "WebRTC",
+        "Socket.IO",
+      ],
+      Other: [
+        "Git",
+        "Postman",
+        "VS Code",
+      ],
+    },
+    challenges: [
+      {
+        title: "Transaction Integrity & Fraud Prevention",
+        description:
+          "Preventing double-spending or unauthorized balance modifications in the dual-token virtual ledger.",
+        solution:
+          "Implemented database-level Row-Level Security (RLS) triggers on PostgreSQL, combined with transactional database queries, ensuring that every debit has a corresponding credit and no balance updates can bypass the API layer.",
+      },
+      {
+        title: "Low-Latency Real-Time Calling",
+        description:
+          "Ensuring low-latency, stable audio/video calls under varying network conditions on mobile devices.",
+        solution:
+          "Used GetStream SDK alongside native WebRTC capabilities to optimize connection routing and adapt video/audio quality dynamically based on client bandwidth.",
+      },
+      {
+        title: "Real-Time Ledger Updates",
+        description:
+          "Reflecting gift transactions and wallet updates instantly during calls without blocking the UI.",
+        solution:
+          "Utilized Redis for lightweight session caching and instant Pub/Sub notifications, ensuring wallet states update sub-100ms in active rooms.",
+      },
+    ],
+    projectImages: [
+      { src: "/ringbuzz/WhatsApp Image 2026-06-19 at 4.05.56 PM.jpeg", alt: "RingBuzz - Splash", name: "Splash Screen" },
+      { src: "/ringbuzz/WhatsApp Image 2026-06-19 at 4.05.56 PM (1).jpeg", alt: "RingBuzz - Login", name: "Login Screen" },
+      { src: "/ringbuzz/WhatsApp Image 2026-06-19 at 4.05.58 PM.jpeg", alt: "RingBuzz - Feed", name: "Feed Screen" },
+      { src: "/ringbuzz/WhatsApp Image 2026-06-19 at 4.05.58 PM (1).jpeg", alt: "RingBuzz - Profile", name: "Profile Screen" },
+      { src: "/ringbuzz/WhatsApp Image 2026-06-19 at 4.05.58 PM (2).jpeg", alt: "RingBuzz - Search", name: "Search Screen" },
+      { src: "/ringbuzz/WhatsApp Image 2026-06-19 at 4.05.59 PM.jpeg", alt: "RingBuzz - Video Call", name: "Video Call Screen" },
+      { src: "/ringbuzz/WhatsApp Image 2026-06-19 at 4.05.59 PM (1).jpeg", alt: "RingBuzz - Audio Call", name: "Audio Call Screen" },
+      { src: "/ringbuzz/WhatsApp Image 2026-06-19 at 4.06.00 PM.jpeg", alt: "RingBuzz - Wallet", name: "Wallet Screen" },
+      { src: "/ringbuzz/WhatsApp Image 2026-06-19 at 4.06.00 PM (1).jpeg", alt: "RingBuzz - Gifting", name: "Gifting Screen" },
+      { src: "/ringbuzz/WhatsApp Image 2026-06-19 at 4.06.00 PM (2).jpeg", alt: "RingBuzz - History", name: "Transaction History" },
+    ],
+  },
 ];
+

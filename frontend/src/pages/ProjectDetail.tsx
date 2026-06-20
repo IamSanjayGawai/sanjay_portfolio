@@ -1,236 +1,357 @@
 
+import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
-import {project_detail} from '../data/project-details'
-import WorkInProgress from './WorkInProgress';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { project_detail } from '../data/project-details';
 import Footer from '../components/Footer';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const ProjectDetail = () => {
   const { id } = useParams();
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = useState<'features' | 'stack'>('features');
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
-  // Mock project data - in a real app, this would come from an API
+  const project = project_detail.find((p: any) => p.id === Number(id));
 
-const project = project_detail.find(p => p.id === Number(id));
-  console.log(project_detail,project, id);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (!project) return;
 
+    const ctx = gsap.context(() => {
+      // Hero parallax
+      gsap.fromTo('.pd-hero-bg', { scale: 1.1 }, {
+        scale: 1, duration: 1.4, ease: 'power3.out'
+      });
 
+      // Staggered entrance
+      gsap.fromTo('.pd-animate',
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: 'power3.out', delay: 0.2 }
+      );
 
-if (!project) {
+      // Scroll-triggered cards
+      gsap.utils.toArray<HTMLElement>('.pd-card').forEach((card) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1, y: 0, duration: 0.6, ease: 'power3.out',
+            scrollTrigger: { trigger: card, start: 'top 88%', toggleActions: 'play none none reverse' }
+          }
+        );
+      });
+
+      // Feature list items
+      gsap.fromTo('.pd-feature-item',
+        { opacity: 0, x: -20 },
+        {
+          opacity: 1, x: 0, duration: 0.4, stagger: 0.05, ease: 'power2.out',
+          scrollTrigger: { trigger: '.pd-features-list', start: 'top 80%' }
+        }
+      );
+
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [project]);
+
+  // Close lightbox on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setLightboxImg(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  if (!project) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-[#080c14]">
+        <div className="text-center">
+          <div className="text-8xl mb-6">🔍</div>
+          <h2 className="font-display text-4xl text-coral mb-4 tracking-widest">PROJECT NOT FOUND</h2>
+          <p className="text-slate-500 dark:text-slate-400 mb-8">This project doesn't exist or has been moved.</p>
+          <Link to="/" className="inline-flex items-center gap-2 px-6 py-3 bg-coral text-white rounded-full font-mono text-sm tracking-wider hover:shadow-lg hover:shadow-coral/30 transition-all">
+            ← RETURN TO HOME
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const statusColor = project.status === 'Completed'
+    ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+    : 'bg-amber-500/10 text-amber-500 border-amber-500/20';
+
   return (
-    <div className="pt-20 min-h-screen flex justify-center items-center text-red-500">
-      <h2>Project not found</h2>
-    </div>
-  );
-}
+    <div ref={sectionRef} className="min-h-screen bg-white dark:bg-[#080c14] transition-colors duration-500">
 
-if (project.status === 'In Development') {
-  return (
-   
-<WorkInProgress />
- 
-  );
- 
-}
+      {/* ── CINEMATIC HERO ── */}
+      <div ref={heroRef} className="relative min-h-[70vh] flex items-end overflow-hidden">
+        {/* Background image with overlay */}
+        <div className="pd-hero-bg absolute inset-0 z-0">
+          <img
+            src={project.image}
+            alt={project.title}
+            className="w-full h-full object-cover object-top"
+            onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080c14] via-[#080c14]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#080c14]/80 via-transparent to-transparent" />
+        </div>
 
+        {/* Decorative grid */}
+        <div className="absolute inset-0 z-0 opacity-10"
+          style={{ backgroundImage: 'linear-gradient(rgba(255,87,51,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,87,51,0.3) 1px, transparent 1px)', backgroundSize: '60px 60px' }}
+        />
 
+        {/* Corner brackets */}
+        <div className="absolute top-8 left-8 w-10 h-10 border-t-2 border-l-2 border-coral/60 z-10" />
+        <div className="absolute top-8 right-8 w-10 h-10 border-t-2 border-r-2 border-coral/60 z-10" />
 
-  return (
-    <div className="pt-20 min-h-screen">
-      {/* Hero Section */}
-      <section className="py-12 bg-secondary/30">
-        <div className="max-w-6xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Link
-              to="/#projects"
-              className="inline-flex items-center text-primary hover:text-primary/80 mb-8 transition-colors"
+        {/* Back link */}
+        <Link to="/"
+          className="absolute top-8 left-20 z-20 pd-animate inline-flex items-center gap-2 text-white/70 hover:text-coral font-mono text-xs tracking-wider transition-colors"
+        >
+          ← BACK TO SYSTEMS
+        </Link>
+
+        {/* Hero Content */}
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 pb-16 pt-32">
+          <div className="pd-animate flex flex-wrap items-center gap-3 mb-5">
+            <span className="px-3 py-1 rounded-full border border-coral/30 bg-coral/10 backdrop-blur-sm font-mono text-xs text-coral tracking-wider">
+              {project.category}
+            </span>
+            <span className={`px-3 py-1 rounded-full border font-mono text-xs tracking-wider ${statusColor}`}>
+              {project.status}
+            </span>
+          </div>
+
+          <h1 className="pd-animate font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white tracking-wide mb-5 leading-[1.05]">
+            {project.title}
+          </h1>
+
+          <p className="pd-animate font-body text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mb-8">
+            {project.description}
+          </p>
+
+          {/* Action buttons */}
+          <div className="pd-animate flex flex-wrap gap-3">
+            {project.liveUrl && (
+              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 px-6 py-3 bg-coral text-white font-mono text-xs tracking-widest rounded-full hover:shadow-xl hover:shadow-coral/30 hover:scale-105 transition-all duration-200"
+              >
+                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                VIEW LIVE ↗
+              </a>
+            )}
+            {(project as any).websiteUrl && (
+              <a href={(project as any).websiteUrl} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-sky-400/40 text-sky-400 font-mono text-xs tracking-widest rounded-full hover:bg-sky-400/10 hover:scale-105 transition-all duration-200"
+              >
+                WEBSITE ↗
+              </a>
+            )}
+            {project.githubUrl && (
+              <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-white/20 text-white/70 font-mono text-xs tracking-widest rounded-full hover:bg-white/10 hover:text-white hover:scale-105 transition-all duration-200"
+              >
+                ⌥ SOURCE CODE
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── TECH TAGS STRIP ── */}
+      <div className="border-y border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02] py-4 overflow-hidden">
+        <div className="flex gap-3 px-6 flex-wrap max-w-6xl mx-auto">
+          {project.tags.map((tag: string) => (
+            <span key={tag}
+              className="px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 font-mono text-[11px] tracking-wider whitespace-nowrap hover:border-coral/40 hover:text-coral transition-colors cursor-default"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Projects
-            </Link>
-            
-            <div className="text-sm text-primary mb-4">{project.category}</div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gradient">
-              {project.title}
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mb-8">
-              {project.description}
-            </p>
-            
-            <div className="flex flex-wrap gap-4 mb-8">
-              <motion.a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                View Live Site
-              </motion.a>
-              <motion.a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-primary-foreground transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                View Code
-              </motion.a>
-            </div>
-            
-            <div className="flex flex-wrap gap-2">
-              {project.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </motion.div>
+              {tag}
+            </span>
+          ))}
         </div>
-      </section>
+      </div>
 
-      {/* Project Image */}
-      <section className="py-12">
-        <div className="max-w-6xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="rounded-2xl overflow-hidden shadow-2xl"
-          >
-            <img
-              src={project.image}
-              alt={project.title}
-              className="w-full h-auto object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/placeholder.svg';
-              }}
-            />
-          </motion.div>
-        </div>
-      </section>
+      {/* ── MAIN CONTENT ── */}
+      <div className="max-w-6xl mx-auto px-6 py-20">
 
-      {/* Project Details */}
-      <section className="py-12 bg-secondary/30">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12">
+        {/* Features + Stack — Tabbed on mobile, side by side on desktop */}
+        <div className="mb-24">
+          {/* Section header */}
+          <div className="flex items-center gap-4 mb-10">
+            <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-white/5 rounded-full border border-slate-200 dark:border-white/10">
+              <button
+                onClick={() => setActiveTab('features')}
+                className={`px-5 py-2 rounded-full font-mono text-xs tracking-widest transition-all duration-200 ${activeTab === 'features' ? 'bg-coral text-white shadow-lg shadow-coral/20' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white'}`}
+              >
+                FEATURES
+              </button>
+              <button
+                onClick={() => setActiveTab('stack')}
+                className={`px-5 py-2 rounded-full font-mono text-xs tracking-widest transition-all duration-200 ${activeTab === 'stack' ? 'bg-cyber text-white shadow-lg shadow-cyber/20' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white'}`}
+              >
+                TECH STACK
+              </button>
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-start">
             {/* Features */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <h2 className="text-3xl font-bold mb-6">Key Features</h2>
+            <div className={`pd-features-list transition-all duration-300 ${activeTab === 'stack' ? 'opacity-40 lg:opacity-100' : 'opacity-100'}`}>
+              <div className="flex items-center gap-3 mb-6">
+                <span className="font-mono text-xs text-coral/60 tracking-[0.3em] uppercase">// Capabilities</span>
+              </div>
+              <h2 className="font-display text-3xl text-slate-900 dark:text-white mt-1 mb-8">
+                Key <span className="text-transparent bg-clip-text bg-gradient-to-r from-coral to-[#FF8A65]">Features</span>
+              </h2>
               <ul className="space-y-3">
-                {project.features.map((feature, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="w-2 h-2 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                    <span>{feature}</span>
+                {project.features.map((feature: string, i: number) => (
+                  <li key={i} className="pd-feature-item flex items-start gap-3 group">
+                    <span className="w-5 h-5 rounded-full bg-coral/10 border border-coral/20 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-coral/20 transition-colors">
+                      <span className="w-1.5 h-1.5 rounded-full bg-coral" />
+                    </span>
+                    <span className="font-body text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{feature}</span>
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
 
-            {/* Technologies */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <h2 className="text-3xl font-bold mb-6">Technologies Used</h2>
-              <div className="space-y-4">
-                {Object.entries(project.technologies as Record<string, string[]>).map(([category, techs]) => (
-                  <div key={category}>
-                    <h3 className="font-semibold text-primary mb-2">{category}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {techs.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-3 py-1 bg-card border border-border rounded-lg text-sm"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+            {/* Tech Stack */}
+            <div className={`space-y-6 transition-all duration-300 ${activeTab === 'features' ? 'opacity-40 lg:opacity-100' : 'opacity-100'}`}>
+              <div className="flex items-center gap-3 mb-6">
+                <span className="font-mono text-xs text-cyber/60 tracking-[0.3em] uppercase">// Architecture</span>
               </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Challenges */}
-      <section className="py-12">
-        <div className="max-w-6xl mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-          >
-            <h2 className="text-3xl font-bold mb-8 text-center">Challenges & Solutions</h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              {project.challenges.map((challenge, index) => (
-                <div key={index} className="p-6 bg-card border border-border rounded-xl">
-                  <h3 className="text-xl font-semibold mb-3">{challenge.title}</h3>
-                  <p className="text-muted-foreground mb-4">{challenge.description}</p>
-                  <div className="border-l-4 border-primary pl-4">
-                    <strong className="text-primary">Solution:</strong>
-                    <p className="mt-1">{challenge.solution}</p>
+              <h2 className="font-display text-3xl text-slate-900 dark:text-white mt-1 mb-8">
+                Tech <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyber to-indigo-400">Stack</span>
+              </h2>
+              {Object.entries(project.technologies as Record<string, string[]>).map(([category, techs]) => (
+                <div key={category} className="pd-card">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-1 h-4 bg-cyber rounded-full" />
+                    <h3 className="font-mono text-xs text-cyber tracking-[0.2em] uppercase">{category}</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {techs.map((tech) => (
+                      <span key={tech}
+                        className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 font-mono text-xs text-slate-700 dark:text-slate-300 hover:border-cyber/40 hover:text-cyber dark:hover:text-cyber transition-colors cursor-default"
+                      >
+                        {tech}
+                      </span>
+                    ))}
                   </div>
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
-        
-      </section>
 
-      {/* create a a div to show themme, typocropht and also create  a div to show all images iof website pages  with name of page */}
-<section className="py-12 bg-secondary/30">
-  <div className="max-w-6xl mx-auto px-4">
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.5 }}
-    >
-      <h2 className="text-3xl font-bold mb-8 text-center">Website Pages</h2>
+        {/* ── CHALLENGES & SOLUTIONS ── */}
+        {project.challenges && project.challenges.length > 0 && (
+          <div className="mb-24">
+            <div className="flex items-center gap-4 mb-2">
+              <span className="font-mono text-xs text-slate-400 tracking-[0.3em] uppercase">// Engineering</span>
+            </div>
+            <h2 className="font-display text-3xl md:text-4xl text-slate-900 dark:text-white mb-12">
+              Challenges <span className="text-transparent bg-clip-text bg-gradient-to-r from-coral via-[#FF8A65] to-cyber">&amp; Solutions</span>
+            </h2>
 
-      {/* Masonry grid using columns */}
-      <div className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
-        { project.projectImages.map((image, index) => (
-          <div
-            key={index}
-            className="break-inside-avoid overflow-hidden rounded-lg shadow-lg bg-card border border-border"
-          >
-            <img
-              src={image.src}
-              alt={image.alt}
-              className="w-full h-auto object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/placeholder.svg';
-              }}
-            />
-            <div className="p-4">
-              <h3 className="text-lg text-center font-semibold">
-                {image.alt}
-              </h3>
+            <div className="grid md:grid-cols-2 gap-5">
+              {project.challenges.map((challenge: any, i: number) => (
+                <div key={i} className="pd-card group relative rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.03] p-6 hover:border-coral/30 dark:hover:border-coral/20 transition-all duration-300 hover:shadow-xl hover:shadow-coral/5 overflow-hidden">
+                  {/* Subtle number */}
+                  <div className="absolute top-4 right-5 font-display text-7xl text-slate-100 dark:text-white/5 select-none leading-none">
+                    {String(i + 1).padStart(2, '0')}
+                  </div>
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="w-2 h-2 rounded-full bg-coral animate-pulse" />
+                      <h3 className="font-display text-base text-coral tracking-wider">{challenge.title}</h3>
+                    </div>
+                    <p className="font-body text-sm text-slate-500 dark:text-slate-400 mb-5 leading-relaxed">
+                      {challenge.description}
+                    </p>
+                    <div className="rounded-xl border border-cyber/20 bg-cyber/5 p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="font-mono text-[10px] text-cyber tracking-[0.2em] uppercase">→ Solution</span>
+                      </div>
+                      <p className="font-body text-sm text-slate-700 dark:text-slate-200 leading-relaxed">
+                        {challenge.solution}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
+        )}
+
+        {/* ── SCREENSHOT GALLERY ── */}
+        {project.projectImages && project.projectImages.length > 0 && (
+          <div>
+            <div className="flex items-center gap-4 mb-2">
+              <span className="font-mono text-xs text-slate-400 tracking-[0.3em] uppercase">// Interface</span>
+            </div>
+            <h2 className="font-display text-3xl md:text-4xl text-slate-900 dark:text-white mb-12">
+              System <span className="text-transparent bg-clip-text bg-gradient-to-r from-coral to-[#FF8A65]">Screens</span>
+            </h2>
+
+            <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
+              {project.projectImages.map((image: any, index: number) => (
+                <div
+                  key={index}
+                  onClick={() => setLightboxImg(image.src)}
+                  className="pd-card break-inside-avoid overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 group cursor-zoom-in relative hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/40 transition-all duration-300"
+                >
+                  <div className="overflow-hidden">
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
+                    />
+                  </div>
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white/20 backdrop-blur-sm text-white font-mono text-xs px-3 py-1.5 rounded-full border border-white/30">
+                      🔍 VIEW
+                    </span>
+                  </div>
+                  <div className="px-4 py-3 bg-white dark:bg-[#0d1117]">
+                    <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400">{image.name || image.alt}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
-    </motion.div>
-  </div>
-</section>
+
+      {/* ── LIGHTBOX ── */}
+      {lightboxImg && (
+        <div
+          className="fixed inset-0 z-[999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setLightboxImg(null)}
+        >
+          <button
+            className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white font-mono text-lg flex items-center justify-center hover:bg-white/20 transition-colors"
+            onClick={() => setLightboxImg(null)}
+          >
+            ✕
+          </button>
+          <img
+            src={lightboxImg}
+            alt="Screenshot"
+            className="max-w-full max-h-[90vh] rounded-xl object-contain shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
 
       <Footer />
     </div>

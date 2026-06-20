@@ -97,26 +97,7 @@ const ProjectsSection = () => {
   ];
 
   return (
-    <div className="min-h-screen py-32 mesh-gradient relative overflow-hidden">
-      {/* Static background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div 
-          className="absolute top-20 left-10 w-96 h-96 rounded-full blur-3xl"
-          style={{
-            background: 'radial-gradient(circle, hsl(173 80% 40% / 0.15), transparent 70%)'
-          }}
-        />
-        <div 
-          className="absolute bottom-20 right-10 w-[500px] h-[500px] rounded-full blur-3xl"
-          style={{
-            background: 'radial-gradient(circle, hsl(262 83% 58% / 0.12), transparent 70%)'
-          }}
-        />
-      </div>
-
-      {/* Grid pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:32px_32px]"></div>
-
+    <div className="min-h-screen py-32 bg-surface relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="text-center mb-20">
           <div>
