@@ -444,7 +444,7 @@ const HeroSection = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-sky-500/20 via-sky-400/20 to-sky-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 {/* Metallic Shine Sweep */}
-                <div className="absolute top-0 bottom-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shineSweep_1.5s_infinite_linear]" style={{ skewX: '-15deg' }} />
+                <div className="absolute top-0 bottom-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shineSweep_1.5s_infinite_linear]" style={{ transform: 'skewX(-15deg)' }} />
 
                 <span className="relative z-10 flex items-center justify-center gap-3">
                   <span className="w-2 h-2 rounded-full bg-sky-500 group-hover:bg-sky-400 animate-pulse transition-colors duration-300 shadow-[0_0_8px_rgba(14,165,233,0.8)]" />
