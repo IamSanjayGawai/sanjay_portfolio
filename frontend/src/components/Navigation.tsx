@@ -183,7 +183,7 @@ const Navigation = () => {
             </button>
 
             <a
-              href="/Sanjay_Gawai_Resume14.pdf"
+              href="/SanjayGawai_Resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className={`flex-shrink-0 items-center justify-center rounded-[30px] font-body text-[12.5px] font-semibold tracking-wider transition-all duration-500 hover:scale-105 active:scale-95 bg-gradient-to-r from-coral to-cyber text-white hover:shadow-[0_0_20px_rgba(255,0,127,0.4)] ${isScrolled
@@ -264,7 +264,7 @@ const Navigation = () => {
           ))}
 
           <a
-            href="/Sanjay_Gawai_Resume14.pdf"
+            href="/SanjayGawai_Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-4 px-8 py-3 bg-gradient-to-r from-coral to-cyber text-white font-display text-sm tracking-widest rounded-full hover:shadow-[0_0_20px_rgba(255,0,127,0.4)] transition-all"

@@ -383,7 +383,7 @@ const HeroSection = () => {
               </button>
 
               <a
-                href="/Sanjay_Gawai_Resume14.pdf"
+                href="/SanjayGawai_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="magnetic w-full sm:w-auto px-4 sm:px-8 py-3 sm:py-3.5 border border-sky-500/50 dark:border-sky-500/30 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-500/10 transition-all text-center flex items-center justify-center gap-2 backdrop-blur-sm flex-shrink-0"
