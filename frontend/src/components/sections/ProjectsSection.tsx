@@ -130,20 +130,19 @@ const ProjectsSection = () => {
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
+
                   {/* Featured badge */}
                   {project.featured && (
                     <div className="absolute top-4 left-4 px-4 py-1.5 bg-gradient-primary text-primary-foreground rounded-full text-xs font-bold shadow-lg z-10">
                       ⭐ Featured
                     </div>
                   )}
-                  
+
                   {/* Status badge */}
-                  <span className={`absolute top-4 right-4 px-3 py-1.5 ${
-                    project.status === 'Completed' 
-                      ? 'bg-gradient-to-r from-emerald-500 to-emerald-600' 
-                      : 'bg-gradient-to-r from-amber-500 to-amber-600'
-                  } text-white rounded-full text-xs font-bold shadow-lg backdrop-blur-sm z-10`}>
+                  <span className={`absolute top-4 right-4 px-3 py-1.5 ${project.status === 'Completed'
+                    ? 'bg-gradient-to-r from-emerald-500 to-emerald-600'
+                    : 'bg-gradient-to-r from-amber-500 to-amber-600'
+                    } text-white rounded-full text-xs font-bold shadow-lg backdrop-blur-sm z-10`}>
                     {project.status}
                   </span>
 
@@ -170,7 +169,7 @@ const ProjectsSection = () => {
                 <p className="text-muted-foreground mb-5 text-sm leading-relaxed line-clamp-3 flex-grow">
                   {project.description}
                 </p>
-                
+
                 <div className="flex flex-wrap gap-2 mt-auto">
                   {project.tags.slice(0, 4).map((tag) => (
                     <span

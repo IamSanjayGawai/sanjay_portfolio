@@ -105,7 +105,7 @@ const BoardingPassCard = ({ exp, index }: { exp: any, index: number }) => {
             <div className="relative p-[2px] rounded-xl mb-4 z-10 overflow-hidden shadow-[0_0_15px_rgba(14,165,233,0.15)] group cursor-default hover:shadow-[0_0_25px_rgba(14,165,233,0.3)] transition-shadow duration-500">
               {/* Spinning glowing border effect */}
               <div className="absolute inset-[-100%] animate-[spin_8s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,#0284c7_20%,#38bdf8_50%,#0284c7_80%,transparent_100%)] opacity-60 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
+
               {/* Opaque inner box for perfect text readability */}
               <div className="relative bg-slate-50 dark:bg-[#0b1120] rounded-[10px] p-4 h-full w-full">
                 <div className="flex items-center gap-2 mb-2">
@@ -391,7 +391,7 @@ const ExperienceSection = () => {
         cardCentersRef.current = centers;
         setCardCenters(centers);
       };
-      
+
       handleResize();
       setTimeout(handleResize, 100);
       setTimeout(handleResize, 500);
@@ -418,7 +418,7 @@ const ExperienceSection = () => {
       const currentPlaneX = gsap.getProperty(planeContainerRef.current, "x") as number || 0;
       const currentPlaneY = gsap.getProperty(planeContainerRef.current, "y") as number || 0;
       const currentRotation = gsap.getProperty(planeRotationRef.current, "rotationZ") as number || 0;
-      
+
       const deltaX = currentPlaneX - lastPlaneX;
       const deltaY = currentPlaneY - lastPlaneY;
       lastPlaneX = currentPlaneX;
@@ -570,7 +570,7 @@ const ExperienceSection = () => {
   const generatePath = () => {
     let d = `M 0 0 `;
     // Draw the path using a loop over physical Y pixels
-    const step = 20; 
+    const step = 20;
     for (let y = 0; y <= svgHeight; y += step) {
       const x = getPlaneX(y, cardCenters);
       d += `L ${x} ${y} `;
@@ -622,15 +622,15 @@ const ExperienceSection = () => {
             className="absolute left-[20px] md:left-1/2 top-0 z-30 w-[512px] h-[512px] flex items-center justify-center -ml-[256px] -mt-[256px] pointer-events-none"
           >
             {/* High Performance Local Smoke Canvas */}
-            <canvas 
+            <canvas
               ref={smokeCanvasRef}
               width={512}
               height={512}
               className="absolute inset-0 z-0 pointer-events-none"
             />
-            
-            <div 
-              ref={planeRotationRef} 
+
+            <div
+              ref={planeRotationRef}
               className="relative z-10 w-full h-full flex items-center justify-center drop-shadow-[0_20px_25px_rgba(14,165,233,0.4)] scale-[0.4] sm:scale-[0.6] md:scale-100"
             >
               <Plane3D scale={0.006} rotation={[Math.PI / 2, Math.PI, 0]} />
@@ -654,7 +654,7 @@ const ExperienceSection = () => {
                     </div>
                   </div>
                 )}
-                
+
                 <div className="relative z-10 w-full">
                   <BoardingPassCard exp={exp} index={index} />
                 </div>

@@ -6,9 +6,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
+import { TutorialProvider } from "./contexts/TutorialContext";
 import { AnimatePresence, motion } from "framer-motion";
 import Navigation from "./components/Navigation";
 import CustomCursor from "./components/CustomCursor";
+import { GlobalQuestMarker } from "./components/ui/QuestMarker";
 import Home from "./pages/Home";
 import ProjectDetail from "./pages/ProjectDetail";
 import NotFound from "./pages/NotFound";
@@ -70,7 +72,10 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <AppContent />
+        <TutorialProvider>
+          <GlobalQuestMarker />
+          <AppContent />
+        </TutorialProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

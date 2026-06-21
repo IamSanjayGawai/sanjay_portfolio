@@ -507,12 +507,15 @@ const Footer = () => {
           </div>
 
           {/* Copyright details */}
-          <div className="flex flex-col sm:flex-row items-center justify-between mt-6 font-mono text-[9px] font-bold text-slate-700 dark:text-slate-400 tracking-widest gap-2">
-            <span className="drop-shadow-md">
-              © {currentYear} · DESIGNED & ENGINEERED BY SANJAY GAWAI
+          <div className="flex flex-col sm:flex-row items-center justify-between mt-6 font-mono text-[10px] sm:text-xs font-bold text-slate-900 dark:text-slate-200 tracking-widest gap-3 bg-white/40 dark:bg-black/40 backdrop-blur-md border border-slate-300 dark:border-white/10 p-3 sm:p-4 rounded-xl w-full z-50 shadow-lg">
+            <span className="drop-shadow-md text-center sm:text-left leading-relaxed">
+              © {currentYear} OFFICIAL COPYRIGHT
+              <br className="sm:hidden" />
+              <span className="hidden sm:inline"> · </span>
+              COMPLETELY BUILT & DESIGNED BY SANJAY GAWAI
             </span>
-            <span className="flex items-center gap-1 opacity-70">
-              <Orbit size={10} />
+            <span className="flex items-center gap-1.5 opacity-90 bg-white/50 dark:bg-white/10 px-2 py-1 rounded-md border border-slate-300 dark:border-white/10">
+              <Orbit size={12} />
               SYS: ORBITAL_v2.5.0
             </span>
           </div>

@@ -57,9 +57,9 @@ const Navigation = () => {
             <Link to="/" className="flex-shrink-0 group">
               <div className={`flex items-center justify-center rounded-full transition-all duration-500 bg-slate-900 shadow-[0_0_15px_rgba(14,165,233,0.4)] overflow-hidden border-[2.5px] border-sky-500 ${isScrolled ? 'w-10 h-10' : 'w-12 h-12'
                 }`}>
-                <img 
-                  src="/profile.png" 
-                  alt="Sanjay Gawai" 
+                <img
+                  src="/profile.png"
+                  alt="Sanjay Gawai"
                   className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = '/profile.png';
@@ -115,7 +115,7 @@ const Navigation = () => {
                   <div className="px-3 py-2 border-b border-slate-100 dark:border-white/5 mb-1">
                     <span className="font-mono text-[9px] text-slate-500 uppercase tracking-widest">ENVIRONMENT</span>
                   </div>
-                  
+
                   <button onClick={() => { setWeather('summer'); setIsWeatherMenuOpen(false); }} className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors font-display text-xs tracking-wider ${weather === 'summer' ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}>
                     <SunMedium size={14} className="text-amber-500" /> Summer Flare
                   </button>
@@ -136,49 +136,43 @@ const Navigation = () => {
               aria-label="Toggle theme"
             >
               {/* Sky Backgrounds (Shows target theme sky) */}
-              <div className={`absolute inset-0 bg-gradient-to-r transition-all duration-500 ${
-                theme === 'dark'
+              <div className={`absolute inset-0 bg-gradient-to-r transition-all duration-500 ${theme === 'dark'
                   ? 'from-sky-400 via-sky-300 to-amber-200'
                   : 'from-slate-950 via-slate-900 to-indigo-950'
-              }`} />
-              
+                }`} />
+
               {/* Twinkling stars (visible when current theme is light, showing the target dark state) */}
-              <div className={`absolute inset-0 transition-opacity duration-500 pointer-events-none ${
-                theme === 'light' ? 'opacity-100 animate-pulse' : 'opacity-0'
-              }`}>
+              <div className={`absolute inset-0 transition-opacity duration-500 pointer-events-none ${theme === 'light' ? 'opacity-100 animate-pulse' : 'opacity-0'
+                }`}>
                 <div className="absolute w-[2px] h-[2px] bg-white rounded-full top-2 left-4" />
                 <div className="absolute w-[3px] h-[3px] bg-white rounded-full top-6 left-8" />
                 <div className="absolute w-[2px] h-[2px] bg-white rounded-full top-3 left-10" />
                 <div className="absolute w-[2px] h-[2px] bg-white rounded-full top-7 left-3" />
               </div>
-              
+
               {/* Clouds (visible when current theme is dark, showing the target light state) */}
-              <div className={`absolute inset-0 transition-opacity duration-500 pointer-events-none ${
-                theme === 'dark' ? 'opacity-100' : 'opacity-0'
-              }`}>
+              <div className={`absolute inset-0 transition-opacity duration-500 pointer-events-none ${theme === 'dark' ? 'opacity-100' : 'opacity-0'
+                }`}>
                 <div className="absolute w-5 h-2 bg-white/70 rounded-full top-2 left-10 animate-[bounce_4s_infinite]" />
                 <div className="absolute w-6 h-2.5 bg-white/60 rounded-full top-4.5 left-12 animate-[bounce_6s_infinite]" />
               </div>
 
               {/* Slider Labels (Shows action/target state) */}
-              <span className={`absolute left-3.5 font-mono text-[9px] font-black z-10 select-none transition-all duration-500 ${
-                theme === 'light' ? 'opacity-100 text-indigo-200' : 'opacity-0 text-transparent pointer-events-none'
-              }`}>
+              <span className={`absolute left-3.5 font-mono text-[9px] font-black z-10 select-none transition-all duration-500 ${theme === 'light' ? 'opacity-100 text-indigo-200' : 'opacity-0 text-transparent pointer-events-none'
+                }`}>
                 NIGHT
               </span>
-              <span className={`absolute right-3.5 font-mono text-[9px] font-black z-10 select-none transition-all duration-500 ${
-                theme === 'dark' ? 'opacity-100 text-slate-800' : 'opacity-0 text-transparent pointer-events-none'
-              }`}>
+              <span className={`absolute right-3.5 font-mono text-[9px] font-black z-10 select-none transition-all duration-500 ${theme === 'dark' ? 'opacity-100 text-slate-800' : 'opacity-0 text-transparent pointer-events-none'
+                }`}>
                 DAY
               </span>
 
               {/* Toggle Handle: Sun / Moon (Shows target theme icon) */}
               <div
-                className={`absolute w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 shadow-md ${
-                  theme === 'dark'
+                className={`absolute w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 shadow-md ${theme === 'dark'
                     ? 'left-1 bg-amber-100 text-amber-500 border border-amber-300/30'
                     : 'left-[60px] bg-slate-800 text-indigo-300 border border-indigo-500/20'
-                } group-hover:scale-105`}
+                  } group-hover:scale-105`}
               >
                 {theme === 'dark' ? (
                   <Sun size={17} className="fill-amber-400 animate-[spin_10s_linear_infinite]" />
