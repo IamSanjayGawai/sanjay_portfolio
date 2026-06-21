@@ -132,8 +132,8 @@ const ProjectsShowcase = () => {
       {/* Global Title */}
       <div className="relative z-30 pt-24 pb-12 px-6 pointer-events-none">
         <div className="max-w-7xl mx-auto text-center md:text-left">
-          <span className="font-mono text-xs text-bone/70 tracking-[0.5em] uppercase block mb-4 drop-shadow-md">Core Systems</span>
-          <h2 className="font-display text-5xl md:text-8xl text-bone/60 font-bold tracking-widest whitespace-nowrap drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+          <span className="font-mono text-[10px] sm:text-xs text-bone/70 tracking-[0.3em] sm:tracking-[0.5em] uppercase block mb-4 drop-shadow-md">Core Systems</span>
+          <h2 className="font-display text-3xl sm:text-5xl md:text-8xl text-bone/60 font-bold tracking-widest md:whitespace-nowrap drop-shadow-[0_0_15px_rgba(255,255,255,0.1)] leading-tight">
             SELECTED WORKS
           </h2>
         </div>
@@ -158,7 +158,7 @@ const ProjectsShowcase = () => {
         return (
           <section
             key={project.id + project.title}
-            className="project-parallax-section relative w-full min-h-screen flex flex-col justify-center py-24 md:py-32"
+            className="project-parallax-section relative w-full md:min-h-screen flex flex-col justify-center py-16 md:py-32"
           >
             {/* Background elements */}
             <div className={`absolute inset-0 bg-gradient-to-b from-transparent via-${isCoral ? 'coral' : 'cyber'}/5 to-transparent opacity-30 pointer-events-none`} />
@@ -434,8 +434,8 @@ const ProjectsShowcase = () => {
                   })}
                 </div>
 
-                {/* Mobile Fallback Grid (Visible only on small screens) */}
-                <div className="grid grid-cols-2 gap-4 lg:hidden mt-8">
+                {/* Mobile Fallback Grid (Hidden based on user request) */}
+                <div className="hidden mt-8">
                   {project.images.map((imgSrc, imgIdx) => (
                     <div key={imgIdx} className={`p-1 rounded-xl border ${isCoral ? 'border-coral/30' : 'border-cyber/30'} bg-surface/90 overflow-hidden`}>
                       <div className="w-full rounded-lg overflow-hidden">

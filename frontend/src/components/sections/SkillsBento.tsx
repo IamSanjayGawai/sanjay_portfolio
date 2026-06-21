@@ -112,8 +112,8 @@ const SkillsBento = () => {
           ease: 'power3.out',
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: 'top 75%',
-            toggleActions: 'play none none reverse',
+            start: 'top 85%',
+            once: true,
           },
         }
       );

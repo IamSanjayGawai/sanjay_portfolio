@@ -48,40 +48,37 @@ const HeroSection = () => {
         .fromTo('.hero-desc', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.6 }, '-=0.3')
         .fromTo('.hero-cta', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2')
         .add(() => {
-          // Play the flight animation shortly after entrance
-          gsap.delayedCall(2, () => {
-            // 3D Flight Timeline
-            // The plane loops endlessly without stopping
-            const flight = gsap.timeline({ repeat: -1 });
+          // 3D Flight Timeline
+          // The plane loops endlessly, waiting 5.5s at the start of each loop
+          const flight = gsap.timeline({ repeat: -1 });
 
-            // Wait for path to exist, then get its length
-            const checkPath = setInterval(() => {
-              const pathEl = document.getElementById('visual-flight-path') as unknown as SVGPathElement;
-              if (pathEl && pathEl.getTotalLength) {
-                clearInterval(checkPath);
+          // Wait for path to exist, then get its length
+          const checkPath = setInterval(() => {
+            const pathEl = document.getElementById('visual-flight-path') as unknown as SVGPathElement;
+            if (pathEl && pathEl.getTotalLength) {
+              clearInterval(checkPath);
 
-                const w = window.innerWidth;
+              const w = window.innerWidth;
 
-                // Double Landing Pendulum Flight Path
-                const alt = -150;
-                const retAlt = -250;
-                const rightOffscreen = w + 400; // Off-screen right
-                const leftOffscreen = -2000;    // Off-screen left
-                const runwayLeft = -800;        // Start of runway
-                const runwayRight = 0;          // End of runway
+              // Double Landing Pendulum Flight Path
+              const alt = -150;
+              const retAlt = -250;
+              const rightOffscreen = w + 400; // Off-screen right
+              const leftOffscreen = -2000;    // Off-screen left
+              const runwayLeft = -800;        // Start of runway
+              const runwayRight = 0;          // End of runway
 
-                // 1. Roll Right: -800 to 0
-                // 2. Takeoff Right: 0 to rightOffscreen
-                // 3. U-turn Right
-                // 4. Approach Left: rightOffscreen to 800
-                // 5. Land Left: 800 to 0
-                // 6. Roll Left: 0 to -800
-                // 7. Takeoff Left: -800 to leftOffscreen
-                // 8. U-turn Left
-                // 9. Approach Right: leftOffscreen to -1400
-                // 10. Land Right: -1400 to -800
-                const pathStr = `M ${runwayLeft},0 
-                  L ${runwayRight},0 
+              // 1. Takeoff Right: 0 to rightOffscreen
+              // 2. U-turn Right
+              // 3. Approach Left: rightOffscreen to 800
+              // 4. Land Left: 800 to 0
+              // 5. Roll Left: 0 to -800
+              // 6. Takeoff Left: -800 to leftOffscreen
+              // 7. U-turn Left
+              // 8. Approach Right: leftOffscreen to -1400
+              // 9. Land Right: -1400 to -800
+              // 10. Roll Right: -800 to 0
+              const pathStr = `M ${runwayRight},0 
                   C 300,0 500,${alt} 800,${alt}
                   L ${rightOffscreen},${alt}
                   C ${rightOffscreen + 400},${alt} ${rightOffscreen + 400},${retAlt} ${rightOffscreen},${retAlt}
@@ -92,86 +89,89 @@ const HeroSection = () => {
                   L ${leftOffscreen},${alt}
                   C ${leftOffscreen - 400},${alt} ${leftOffscreen - 400},${retAlt} ${leftOffscreen},${retAlt}
                   L -1400,${retAlt}
-                  C -1100,${retAlt} -1000,0 ${runwayLeft},0`;
+                  C -1100,${retAlt} -1000,0 ${runwayLeft},0
+                  L ${runwayRight},0`;
 
-                // Draw the visual path
-                const visualPathEl = document.getElementById('visual-flight-path') as unknown as SVGPathElement;
-                if (visualPathEl) {
-                  visualPathEl.setAttribute('d', pathStr);
-                  gsap.to(visualPathEl, { opacity: 1, duration: 1.5, delay: 0.5 });
-                  const len = visualPathEl.getTotalLength();
-                  gsap.set(visualPathEl, { strokeDasharray: len, strokeDashoffset: len });
-                  gsap.to(visualPathEl, { strokeDashoffset: 0, duration: 25, ease: 'power1.inOut' });
-                }
-
-                // Calculate exact dynamic timings for the off-screen flips using SVG getTotalLength
-                const measurePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                const getLen = (d: string) => {
-                  measurePath.setAttribute("d", d);
-                  return measurePath.getTotalLength();
-                };
-
-                const segRollRight = `M ${runwayLeft},0 L ${runwayRight},0`;
-                const segTakeoffRight = `M ${runwayRight},0 C 300,0 500,${alt} 800,${alt} L ${rightOffscreen},${alt}`;
-                const segUTurnRight = `M ${rightOffscreen},${alt} C ${rightOffscreen + 400},${alt} ${rightOffscreen + 400},${retAlt} ${rightOffscreen},${retAlt}`;
-                const segFlyLandLeft = `M ${rightOffscreen},${retAlt} L 800,${retAlt} C 400,${retAlt} 200,0 ${runwayRight},0`;
-                const segRollLeft = `M ${runwayRight},0 L ${runwayLeft},0`;
-                const segTakeoffLeft = `M ${runwayLeft},0 C -1100,0 -1300,${alt} -1600,${alt} L ${leftOffscreen},${alt}`;
-                const segUTurnLeft = `M ${leftOffscreen},${alt} C ${leftOffscreen - 400},${alt} ${leftOffscreen - 400},${retAlt} ${leftOffscreen},${retAlt}`;
-                const segFlyLandRight = `M ${leftOffscreen},${retAlt} L -1400,${retAlt} C -1100,${retAlt} -1000,0 ${runwayLeft},0`;
-
-                const d1 = getLen(segRollRight);
-                const d2 = getLen(segTakeoffRight);
-                const d3 = getLen(segUTurnRight);
-                const d4 = getLen(segFlyLandLeft);
-                const d5 = getLen(segRollLeft);
-                const d6 = getLen(segTakeoffLeft);
-                const d7 = getLen(segUTurnLeft);
-                const d8 = getLen(segFlyLandRight);
-
-                // Variable speeds (pixels per second)
-                const speedSlow = 120; // Very slow, majestic flight across the screen to read the motto
-                const speedFast = 2500; // Extremely fast off-screen turnaround
-
-                // Calculate durations for each segment based on their physical length
-                const t1 = d1 / speedSlow;
-                const t2 = d2 / speedSlow;
-                const t3 = d3 / speedFast; // U-turn right
-                const t4 = d4 / speedSlow;
-                const t5 = d5 / speedSlow;
-                const t6 = d6 / speedSlow;
-                const t7 = d7 / speedFast; // U-turn left
-                const t8 = d8 / speedSlow;
-
-                // Chain the sequential path animations
-                flight.to('.hero-badge', { motionPath: { path: segRollRight, autoRotate: true }, duration: t1, ease: 'none' })
-                  .to('.hero-badge', { motionPath: { path: segTakeoffRight, autoRotate: true }, duration: t2, ease: 'none' })
-
-                  // Right U-turn (Fast)
-                  .addLabel("rightUTurn")
-                  .to('.hero-badge', { motionPath: { path: segUTurnRight, autoRotate: true }, duration: t3, ease: 'none' }, "rightUTurn")
-                  // Trigger flip instantly at start of fast U-turn
-                  .to('.hero-badge', { rotationX: 180, duration: 0.1, ease: 'none' }, "rightUTurn")
-                  .to('.animate-wave-flag', { scaleX: -1, duration: 0.1, ease: 'none' }, "rightUTurn")
-
-                  .to('.hero-badge', { motionPath: { path: segFlyLandLeft, autoRotate: true }, duration: t4, ease: 'none' })
-                  .to('.hero-badge', { motionPath: { path: segRollLeft, autoRotate: true }, duration: t5, ease: 'none' })
-                  .to('.hero-badge', { motionPath: { path: segTakeoffLeft, autoRotate: true }, duration: t6, ease: 'none' })
-
-                  // Left U-turn (Fast)
-                  .addLabel("leftUTurn")
-                  .to('.hero-badge', { motionPath: { path: segUTurnLeft, autoRotate: true }, duration: t7, ease: 'none' }, "leftUTurn")
-                  // Trigger flip instantly at start of fast U-turn
-                  .to('.hero-badge', { rotationX: 360, duration: 0.1, ease: 'none' }, "leftUTurn")
-                  .to('.animate-wave-flag', { scaleX: 1, duration: 0.1, ease: 'none' }, "leftUTurn")
-
-                  .to('.hero-badge', { motionPath: { path: segFlyLandRight, autoRotate: true }, duration: t8, ease: 'none' });
-
-                // Reset rotationX to 0 at the end of the timeline so it loops cleanly
-                flight.set('.hero-badge', { rotationX: 0 });
+              // Draw the visual path
+              const visualPathEl = document.getElementById('visual-flight-path') as unknown as SVGPathElement;
+              if (visualPathEl) {
+                visualPathEl.setAttribute('d', pathStr);
+                gsap.to(visualPathEl, { opacity: 1, duration: 1.5, delay: 0.5 });
+                const len = visualPathEl.getTotalLength();
+                gsap.set(visualPathEl, { strokeDasharray: len, strokeDashoffset: len });
+                gsap.to(visualPathEl, { strokeDashoffset: 0, duration: 25, ease: 'power1.inOut' });
               }
-            }, 100);
-          });
+
+              // Calculate exact dynamic timings for the off-screen flips using SVG getTotalLength
+              const measurePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+              const getLen = (d: string) => {
+                measurePath.setAttribute("d", d);
+                return measurePath.getTotalLength();
+              };
+
+              const segRollRight = `M ${runwayLeft},0 L ${runwayRight},0`;
+              const segTakeoffRight = `M ${runwayRight},0 C 300,0 500,${alt} 800,${alt} L ${rightOffscreen},${alt}`;
+              const segUTurnRight = `M ${rightOffscreen},${alt} C ${rightOffscreen + 400},${alt} ${rightOffscreen + 400},${retAlt} ${rightOffscreen},${retAlt}`;
+              const segFlyLandLeft = `M ${rightOffscreen},${retAlt} L 800,${retAlt} C 400,${retAlt} 200,0 ${runwayRight},0`;
+              const segRollLeft = `M ${runwayRight},0 L ${runwayLeft},0`;
+              const segTakeoffLeft = `M ${runwayLeft},0 C -1100,0 -1300,${alt} -1600,${alt} L ${leftOffscreen},${alt}`;
+              const segUTurnLeft = `M ${leftOffscreen},${alt} C ${leftOffscreen - 400},${alt} ${leftOffscreen - 400},${retAlt} ${leftOffscreen},${retAlt}`;
+              const segFlyLandRight = `M ${leftOffscreen},${retAlt} L -1400,${retAlt} C -1100,${retAlt} -1000,0 ${runwayLeft},0`;
+
+              const d1 = getLen(segRollRight);
+              const d2 = getLen(segTakeoffRight);
+              const d3 = getLen(segUTurnRight);
+              const d4 = getLen(segFlyLandLeft);
+              const d5 = getLen(segRollLeft);
+              const d6 = getLen(segTakeoffLeft);
+              const d7 = getLen(segUTurnLeft);
+              const d8 = getLen(segFlyLandRight);
+
+              // Variable speeds (pixels per second)
+              const speedSlow = 120; // Very slow, majestic flight across the screen to read the motto
+              const speedFast = 2500; // Extremely fast off-screen turnaround
+
+              // Calculate durations for each segment based on their physical length
+              const t1 = d1 / speedSlow;
+              const t2 = d2 / speedSlow;
+              const t3 = d3 / speedFast; // U-turn right
+              const t4 = d4 / speedSlow;
+              const t5 = d5 / speedSlow;
+              const t6 = d6 / speedSlow;
+              const t7 = d7 / speedFast; // U-turn left
+              const t8 = d8 / speedSlow;
+
+              // Chain the sequential path animations
+              // Wait 15s at start (0,0) before taking off
+              flight.to('.hero-badge', { motionPath: { path: segTakeoffRight, autoRotate: true }, duration: t2, ease: 'none', delay: 15 })
+
+                // Right U-turn (Fast)
+                .addLabel("rightUTurn")
+                .to('.hero-badge', { motionPath: { path: segUTurnRight, autoRotate: true }, duration: t3, ease: 'none' }, "rightUTurn")
+                // Trigger flip instantly at start of fast U-turn
+                .to('.hero-badge', { rotationX: 180, duration: 0.1, ease: 'none' }, "rightUTurn")
+                .to('.animate-wave-flag', { scaleX: -1, duration: 0.1, ease: 'none' }, "rightUTurn")
+
+                .to('.hero-badge', { motionPath: { path: segFlyLandLeft, autoRotate: true }, duration: t4, ease: 'none' })
+                .to('.hero-badge', { motionPath: { path: segRollLeft, autoRotate: true }, duration: t5, ease: 'none' })
+                .to('.hero-badge', { motionPath: { path: segTakeoffLeft, autoRotate: true }, duration: t6, ease: 'none' })
+
+                // Left U-turn (Fast)
+                .addLabel("leftUTurn")
+                .to('.hero-badge', { motionPath: { path: segUTurnLeft, autoRotate: true }, duration: t7, ease: 'none' }, "leftUTurn")
+                // Trigger flip instantly at start of fast U-turn
+                .to('.hero-badge', { rotationX: 360, duration: 0.1, ease: 'none' }, "leftUTurn")
+                .to('.animate-wave-flag', { scaleX: 1, duration: 0.1, ease: 'none' }, "leftUTurn")
+
+                .to('.hero-badge', { motionPath: { path: segFlyLandRight, autoRotate: true }, duration: t8, ease: 'none' })
+
+                // Finally, roll right back to 0,0 to complete the loop
+                .to('.hero-badge', { motionPath: { path: segRollRight, autoRotate: true }, duration: t1, ease: 'none' });
+
+              // Reset rotationX to 0 at the end of the timeline so it loops cleanly
+              flight.set('.hero-badge', { rotationX: 0 });
+            }
+          }, 100);
         });
 
       // — SVG Stroke Draw Animation —
@@ -288,11 +288,11 @@ const HeroSection = () => {
         )}
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 w-full relative z-10 pt-28 pb-16">
-        <div className="grid lg:grid-cols-5 gap-10 lg:gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full relative z-10 pt-24 pb-12 sm:pt-28 sm:pb-16">
+        <div className="grid md:grid-cols-5 gap-8 lg:gap-12 items-center">
 
           {/* ── Left Column (3/5 width) ── */}
-          <div className="lg:col-span-3 order-2 lg:order-1 relative z-20">
+          <div className="md:col-span-3 relative z-20 flex flex-col items-center md:items-start text-center md:text-left mt-8 md:mt-0">
 
             {/* Visual Flight Path Container — hidden */}
             <div className="absolute top-[60px] sm:top-[70px] left-[200px] sm:left-[280px] w-full h-full pointer-events-none z-0 hidden">
@@ -356,11 +356,11 @@ const HeroSection = () => {
               </div>
 
               {/* 3D Plane Banner Badge */}
-              <div className="hero-badge opacity-0 mb-2 flex items-center justify-start  pl-2 sm:pl-4 relative z-10">
+              <div className="hero-badge opacity-0 mb-4 md:mb-2 flex items-center justify-center md:justify-start w-full relative z-10">
 
                 {/* Waving Flag */}
                 <div
-                  className="animate-wave-flag relative flex items-center justify-start px-4 py-2 border-y border-l border-coral/50 bg-coral/10 backdrop-blur-md shadow-[0_0_15px_rgba(255,87,51,0.2)] min-w-[200px] sm:min-w-[240px]"
+                  className="animate-wave-flag relative flex items-center justify-start px-3 sm:px-4 py-2 border-y border-l border-coral/50 bg-coral/10 backdrop-blur-md shadow-[0_0_15px_rgba(255,87,51,0.2)] min-w-[160px] sm:min-w-[240px]"
                   style={{ clipPath: 'polygon(10% 0%, 100% 0%, 100% 100%, 10% 100%, 0% 50%)' }}
                 >
                   {/* Pole / string attachment edge */}
@@ -373,10 +373,10 @@ const HeroSection = () => {
                 </div>
 
                 {/* String attached to plane */}
-                <div className="h-[2px] w-20 md:w-20 border-b-2 border- border-coral/50 transform -translate-y-0.5 z-0"></div>
+                <div className="h-[2px] w-12 sm:w-20 border-b-2 border-coral/50 transform -translate-y-0.5 z-0"></div>
 
                 {/* 3D Plane Model with Smoke */}
-                <div className="relative z-10 w-24 h-24 sm:w-32 sm:h-32 -ml-2 drop-shadow-md flex items-center justify-center mt-10">
+                <div className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 -ml-2 drop-shadow-md flex items-center justify-center mt-6 sm:mt-10">
                   {/* Smoke emitter at the TAIL of the plane (left side = trailing toward the flag) */}
                   <div id="plane-smoke" className="absolute left-0 top-1/2 -translate-y-1/2 z-20">
                     <div className="smoke-particle" />
@@ -390,7 +390,7 @@ const HeroSection = () => {
                     <div className="smoke-particle" />
                     <div className="smoke-particle" />
                   </div>
-                  <div className="w-full h-full rotate-[-90deg] transform origin-center">
+                  <div className="w-full h-full rotate-[-90deg] transform origin-center scale-[0.6] sm:scale-[0.85] md:scale-100">
                     <Plane3D scale={0.0065} rotation={[Math.PI / 8, 8, 8]} />
                   </div>
                 </div>
@@ -398,17 +398,17 @@ const HeroSection = () => {
             </div>
 
             {/* Name Presentation */}
-            <div className="hero-headline opacity-0 mb-6 -mt-4 relative group cursor-default">
-              <h1 className="font-display font-black text-5xl sm:text-6xl md:text-7xl leading-[1.05] tracking-widest uppercase text-slate-900 dark:text-white transition-transform duration-500 hover:scale-[1.02]">
-                Sanjay <span className="inline-block text-sky-500 dark:text-sky-400 drop-shadow-[0_0_15px_rgba(14,165,233,0.4)]">Gawai.</span>
+            <div className="hero-headline opacity-0 mb-4 sm:mb-6 -mt-2 md:-mt-4 relative group cursor-default w-full">
+              <h1 className="font-display font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.1] tracking-widest uppercase text-slate-900 dark:text-white transition-transform duration-500 hover:scale-[1.02]">
+                Sanjay <br className="block sm:hidden" /><span className="inline-block text-sky-500 dark:text-sky-400 drop-shadow-[0_0_15px_rgba(14,165,233,0.4)]">Gawai.</span>
               </h1>
             </div>
 
             {/* Description */}
-            <div className="hero-desc opacity-0 relative mb-10">
+            <div className="hero-desc opacity-0 relative mb-8 sm:mb-10 w-full flex justify-center md:justify-start">
               {/* Subtle brutalist accent line */}
-              <div className="absolute top-1 bottom-1 left-0 w-1 bg-gradient-to-b from-coral to-cyber/50 rounded-full" />
-              <p className="font-body text-[15px] sm:text-[16px] text-slate-600 dark:text-slate-300 leading-relaxed max-w-md pl-5">
+              <div className="absolute top-1 bottom-1 left-0 md:-left-4 w-1 bg-gradient-to-b from-coral to-cyber/50 rounded-full hidden md:block" />
+              <p className="font-body text-[14px] sm:text-[15px] md:text-[16px] text-slate-600 dark:text-slate-300 leading-relaxed max-w-md md:pl-2 text-center md:text-left">
                 End-to-end, from scratch, in production —
                 I architect high-scale platforms, direct technical strategy, and lead the engineering teams that ship them.
                 Live streaming, fintech ecosystems, and workflow automation.{' '}
@@ -417,7 +417,7 @@ const HeroSection = () => {
             </div>
 
             {/* CTA Buttons */}
-            <div className="hero-cta opacity-0 flex flex-col sm:flex-row flex-wrap gap-4 mt-6">
+            <div className="hero-cta opacity-0 flex flex-col sm:flex-row flex-wrap justify-center md:justify-start gap-4 mt-2 sm:mt-6 w-full">
 
               <style>{`
                 @keyframes shineSweep {
@@ -466,11 +466,11 @@ const HeroSection = () => {
           </div>
 
           {/* ── Right Column (2/5 width) — SVG Blueprint ── */}
-          <div className="lg:col-span-2 order-1 lg:order-2 flex justify-center items-center">
+          <div className="md:col-span-2 flex justify-center items-center w-full mt-10 md:mt-0">
             <svg
               ref={svgRef}
               viewBox="0 0 500 500"
-              className="w-full max-w-lg xl:max-w-xl aspect-square drop-shadow-2xl"
+              className="w-full max-w-[260px] sm:max-w-[320px] md:max-w-md lg:max-w-lg xl:max-w-xl aspect-square drop-shadow-2xl"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >

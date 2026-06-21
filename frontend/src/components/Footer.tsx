@@ -187,7 +187,7 @@ const Footer = () => {
       const rocketY = rect.top + rect.height / 2 + 80; // Adjusted so smoke connects directly to the rocket nozzle
 
       // No smoke at all until initialized. Heavy smoke during prep, massive trail during flight.
-      const particleCount = isFlying ? 40 : (isLaunching ? 15 : 0); 
+      const particleCount = isFlying ? 40 : (isLaunching ? 15 : 0);
 
       for (let i = 0; i < particleCount; i++) {
         rocketParticlesRef.current.push({
@@ -407,10 +407,10 @@ const Footer = () => {
         <div className="max-w-4xl mx-auto px-6">
 
           {/* Main Footer Glassmorphism Card (Space Launching Station) */}
-          <div className="relative bg-white/30 dark:bg-black/40 backdrop-blur-md border border-white/40 dark:border-white/10 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl mt-48">
+          <div className="relative bg-white/30 dark:bg-black/40 backdrop-blur-md border border-white/40 dark:border-white/10 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 shadow-2xl mt-48">
 
             {/* Left — Logo */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 order-1">
               <svg viewBox="0 0 36 36" fill="none" className="w-10 h-10 drop-shadow-md">
                 <rect x="1" y="1" width="34" height="34" rx="8" stroke="currentColor" className="text-sky-600 dark:text-sky-400" strokeWidth="2" />
                 <text x="18" y="24" textAnchor="middle" fill="currentColor" className="font-display text-[16px] font-black text-sky-600 dark:text-sky-400">SG</text>
@@ -421,9 +421,9 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* Center — Interactive Launch Pad (Positioned directly ON TOP of the glassy footer) */}
-            <div className="absolute left-1/2 -translate-x-1/2 bottom-0 flex flex-col items-center justify-center z-50">
-              
+            {/* Center — Interactive Launch Pad */}
+            <div className="relative md:absolute md:left-1/2 md:-translate-x-1/2 md:bottom-0 flex flex-col items-center justify-center z-50 order-3 md:order-2 mt-4 md:mt-0">
+
               {/* Holographic Countdown Floating Above Rocket */}
               {countdown !== null && (
                 <div className="absolute top-[-100px] z-[200] pointer-events-none mix-blend-screen">
@@ -435,7 +435,7 @@ const Footer = () => {
 
               {/* Landing Pad Base Station Glow inside the Glass */}
               <div className="absolute bottom-[-10px] w-64 h-8 bg-slate-900/80 blur-xl rounded-full pointer-events-none" />
-              
+
               <button
                 onClick={handleLaunch}
                 className="relative z-50 flex flex-col items-center justify-center w-36 h-36 rounded-full border-[3px] border-dashed border-slate-500/50 hover:border-coral hover:bg-coral/5 hover:shadow-[0_0_30px_rgba(255,87,51,0.2)] transition-all duration-500 group cursor-pointer overflow-visible bg-black/10 backdrop-blur-sm"
@@ -443,7 +443,7 @@ const Footer = () => {
               >
                 {/* Inner Metallic Ring */}
                 <div className="absolute inset-2 border-2 border-slate-600/30 rounded-full flex items-center justify-center pointer-events-none">
-                   <div className="w-16 h-16 rounded-full bg-slate-900/60 blur-md" />
+                  <div className="w-16 h-16 rounded-full bg-slate-900/60 blur-md" />
                 </div>
 
                 {/* STABLE WRAPPER to prevent React crash when moving the inner container */}
@@ -462,7 +462,7 @@ const Footer = () => {
               <div className="relative mt-4 flex flex-col items-center h-12 pointer-events-none">
                 {!isLaunching && !isFlying && (
                   <span className="font-mono text-xs font-black tracking-[0.3em] text-slate-800 dark:text-coral/80 drop-shadow-sm dark:drop-shadow-[0_0_5px_rgba(255,87,51,0.5)] transition-opacity px-4 py-1 border border-slate-300 dark:border-coral/20 rounded-sm bg-slate-200/80 dark:bg-coral/5 backdrop-blur-sm">
-                    INITIATE LAUNCH
+                    CLICK ON ROCKET
                   </span>
                 )}
                 {/* Empty placeholder to keep the height consistent during launch */}
@@ -470,13 +470,13 @@ const Footer = () => {
                   <span className="h-6 w-full" />
                 )}
               </div>
-              
+
               {/* Pad structural lines extending across the glass card */}
-              <div className="absolute top-[85%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-slate-500/30 to-transparent pointer-events-none -z-10" />
+              <div className="hidden md:block absolute top-[85%] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-slate-500/30 to-transparent pointer-events-none -z-10" />
             </div>
 
             {/* Right — Social Links */}
-            <div className="flex items-center gap-6">
+            <div className="flex flex-row flex-wrap justify-center items-center gap-4 sm:gap-6 mt-2 md:mt-0 order-2 md:order-3">
               <a
                 href="https://github.com/IamSanjayGawai"
                 target="_blank"

@@ -314,9 +314,8 @@ const ExperienceSection = () => {
     }
   ];
 
-  // Map exact physical Y to X based on card centers
   const getPlaneX = (y: number, centers: number[]) => {
-    const amplitude = typeof window !== 'undefined' && window.innerWidth < 768 ? 100 : 250;
+    const amplitude = typeof window !== 'undefined' && window.innerWidth < 1024 ? 0 : 250;
     if (centers.length === 0) return 0;
 
     if (y <= centers[0]) {
@@ -343,7 +342,7 @@ const ExperienceSection = () => {
   };
 
   const getPlaneDxDy = (y: number, centers: number[]) => {
-    const amplitude = typeof window !== 'undefined' && window.innerWidth < 768 ? 100 : 250;
+    const amplitude = typeof window !== 'undefined' && window.innerWidth < 1024 ? 0 : 250;
     if (centers.length === 0) return { dx: 0, dy: 1 };
 
     if (y <= centers[0]) {
@@ -629,7 +628,7 @@ const ExperienceSection = () => {
             
             <div 
               ref={planeRotationRef} 
-              className="relative z-10 w-full h-full flex items-center justify-center drop-shadow-[0_20px_25px_rgba(14,165,233,0.4)]"
+              className="relative z-10 w-full h-full flex items-center justify-center drop-shadow-[0_20px_25px_rgba(14,165,233,0.4)] scale-[0.4] sm:scale-[0.6] md:scale-100"
             >
               <Plane3D scale={0.006} rotation={[Math.PI / 2, Math.PI, 0]} />
             </div>
@@ -637,7 +636,7 @@ const ExperienceSection = () => {
 
           <div className="flex flex-col relative z-10 w-full">
             {experiences.map((exp, index) => (
-              <div key={index} className="relative w-full min-h-[100vh] flex flex-col justify-center py-20" ref={el => { if (el) cardRefs.current[index] = el; }}>
+              <div key={index} className="relative w-full md:min-h-[100vh] flex flex-col justify-center py-10 md:py-20" ref={el => { if (el) cardRefs.current[index] = el; }}>
                 {index < experiences.length - 1 && (
                   <div
                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] max-w-[2000px] h-[500px] z-0 pointer-events-none flex justify-center mix-blend-normal overflow-visible opacity-100"

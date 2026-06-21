@@ -22,9 +22,12 @@ export function Plane3D({ scale = 1, rotation = [0, 0, 0] }: { scale?: number, r
 
     // 3. Renderer setup
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    // Massive container size (512px) to prevent ANY cropping during diagonal rotation
-    renderer.setSize(512, 512);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    // Render internally at exactly 512x512 (crisp quality) but hard-cap devicePixelRatio to 1
+    // to prevent retina displays from rendering 1536x1536 (2.3 million pixels) which causes lag.
+    renderer.setSize(512, 512, false);
+    renderer.domElement.style.width = '512px';
+    renderer.domElement.style.height = '512px';
+    renderer.setPixelRatio(1);
 
     // Append canvas to DOM
     containerRef.current.appendChild(renderer.domElement);
