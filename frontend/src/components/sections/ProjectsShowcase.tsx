@@ -275,12 +275,12 @@ const ProjectsShowcase = () => {
                       Built in 10 Days
                     </div>
                   )}
-                  <h3 className={`font-display text-3xl md:text-4xl lg:text-5xl tracking-widest mb-2 ${isCoral ? 'text-glow-coral text-coral' : 'text-glow-cyber text-cyber'}`}>
-                    {project.title}
-                  </h3>
-                  <p className="font-mono text-xs md:text-sm text-slate-700 dark:text-slate-400 font-semibold tracking-[0.2em] uppercase mb-6">
+                  <p className="font-mono text-xs md:text-sm text-slate-700 dark:text-slate-400 font-semibold tracking-[0.2em] uppercase mb-2">
                     {project.subtitle}
                   </p>
+                  <h3 className={`font-display text-3xl md:text-4xl lg:text-5xl tracking-widest mb-6 ${isCoral ? 'text-glow-coral text-coral' : 'text-glow-cyber text-cyber'}`}>
+                    {project.title}
+                  </h3>
 
                   <p className="font-body text-xs md:text-sm text-slate-900 dark:text-slate-300 font-medium leading-relaxed mb-6">
                     {project.description}
@@ -482,12 +482,12 @@ const ProjectsShowcase = () => {
                 <span className={`font-display text-6xl md:text-7xl opacity-10 block -mb-6 ${isCoral ? 'text-coral' : 'text-cyber'}`}>
                   0{idx + 1}
                 </span>
-                <h3 className={`font-display text-3xl md:text-4xl lg:text-5xl tracking-widest mb-2 ${isCoral ? 'text-glow-coral text-coral' : 'text-glow-cyber text-cyber'}`}>
-                  {project.title}
-                </h3>
-                <p className="font-mono text-xs md:text-sm text-slate-700 dark:text-slate-400 font-semibold tracking-[0.2em] uppercase mb-6">
+                <p className="font-mono text-xs md:text-sm text-slate-700 dark:text-slate-400 font-semibold tracking-[0.2em] uppercase mb-2">
                   {project.subtitle}
                 </p>
+                <h3 className={`font-display text-3xl md:text-4xl lg:text-5xl tracking-widest mb-6 ${isCoral ? 'text-glow-coral text-coral' : 'text-glow-cyber text-cyber'}`}>
+                  {project.title}
+                </h3>
 
                 <p className="font-body text-xs md:text-sm text-slate-900 dark:text-slate-300 font-medium leading-relaxed mb-6">
                   {project.description}

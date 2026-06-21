@@ -14,8 +14,10 @@
     --foreground: 222.2 47.4% 11.2%;
 
     /* Custom Theme Colors (RGB values for Tailwind opacity support) */
-    --coral: 14 165 233; /* Sky Blue 500 */
-    --cyber: 2 132 199; /* Sky Blue 600 */
+    --coral: 30 144 255;
+    /* Dodger Blue / Rich Sky */
+    --cyber: 0 191 255;
+    /* Deep Sky Blue */
     --gunmetal: 255 255 255;
     --surface: 255 255 255;
     --bone: 15 23 42;
@@ -54,8 +56,10 @@
 
   .dark {
     /* Custom Theme Colors (RGB values for Tailwind opacity support) */
-    --coral: 56 189 248; /* Sky Blue 400 */
-    --cyber: 14 165 233; /* Sky Blue 500 */
+    --coral: 0 191 255;
+    /* Deep Sky Blue */
+    --cyber: 30 144 255;
+    /* Dodger Blue / Rich Sky */
     --gunmetal: 15 23 42;
     --surface: 2 6 23;
     --bone: 248 250 252;
@@ -244,6 +248,56 @@
   }
 }
 
+@keyframes sunColorShift {
+  0% {
+    background: #ffffff;
+    box-shadow: 0 0 120px #ffffff, 0 0 180px rgba(253, 224, 71, 0.5);
+  }
+
+  15% {
+    background: #fef08a;
+    /* pale yellow */
+    box-shadow: 0 0 120px #fef08a, 0 0 180px rgba(250, 204, 21, 0.6);
+  }
+
+  30% {
+    background: #facc15;
+    /* yellow */
+    box-shadow: 0 0 100px #facc15, 0 0 160px rgba(234, 179, 8, 0.6);
+  }
+
+  45% {
+    background: #f97316;
+    /* orange */
+    box-shadow: 0 0 80px #f97316, 0 0 130px rgba(234, 88, 12, 0.8);
+  }
+
+  60%,
+  100% {
+    background: #ea580c;
+    /* deep orange */
+    box-shadow: 0 0 50px #ea580c, 0 0 80px rgba(194, 65, 12, 0.9);
+  }
+}
+
+@keyframes raysFade {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+
+  80% {
+    opacity: 0.2;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 @layer utilities {
   .animate-wave-flag {
     transform-origin: right center;
@@ -252,6 +306,14 @@
 
   .animate-fly-plane {
     animation: flyPlane 3s infinite ease-in-out;
+  }
+
+  .animate-sun-color-shift {
+    animation: sunColorShift 20s linear infinite alternate;
+  }
+
+  .animate-rays-fade {
+    animation: raysFade 20s linear infinite alternate;
   }
 }
 

@@ -58,6 +58,11 @@ export default {
 				gunmetal: 'rgb(var(--gunmetal) / <alpha-value>)',
 				surface: 'rgb(var(--surface) / <alpha-value>)',
 				bone: 'rgb(var(--bone) / <alpha-value>)',
+				sky: {
+					400: '#00BFFF', // Deep Sky Blue
+					500: '#1E90FF', // Dodger Blue (Rich Sky)
+					600: '#007BA7', // Cerulean
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

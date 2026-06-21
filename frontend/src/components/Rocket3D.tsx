@@ -73,12 +73,12 @@ export function Rocket3D({ scale = 1, rotation = [0, 0, 0], isSteady = false }: 
         const maxDim = Math.max(size.x, size.y, size.z);
         const targetSize = 15 * scale; // Base size of 15
         const s = maxDim > 0 ? targetSize / maxDim : scale;
-        
+
         wrapper.scale.set(s, s, s);
-        
+
         // Apply rotation to the wrapper
         wrapper.rotation.set(rotation[0], rotation[1], rotation[2]);
-        
+
         scene.add(wrapper);
         rocket = wrapper;
       });

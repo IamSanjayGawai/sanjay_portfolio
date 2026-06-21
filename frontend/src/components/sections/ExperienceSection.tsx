@@ -82,28 +82,38 @@ const BoardingPassCard = ({ exp, index }: { exp: any, index: number }) => {
             )}
 
             <div className="flex justify-between items-start mb-4 border-b border-slate-100 dark:border-white/5 pb-3 relative z-10">
-              <div className="pr-2">
-                <div className="text-[8px] md:text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-1">PASSENGER</div>
-                <div className="font-bold font-display text-slate-800 dark:text-slate-200 uppercase tracking-wide text-xs md:text-sm">Sanjay Gawai</div>
+              <div className="pr-2 flex items-center gap-3 flex-1 min-w-0">
+                <img
+                  src={exp.logo}
+                  alt={exp.company}
+                  className="h-8 w-8 md:h-10 md:w-10 shrink-0 object-cover rounded bg-white dark:bg-transparent shadow-sm border border-slate-200 dark:border-slate-800"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=' + exp.company.charAt(0) + '&background=0ea5e9&color=fff';
+                  }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[8px] md:text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-0.5">ORGANIZATION</div>
+                  <div className="font-bold font-display text-slate-800 dark:text-slate-200 uppercase tracking-wide text-[10px] sm:text-xs md:text-sm leading-tight break-words pr-2">{exp.company}</div>
+                </div>
               </div>
-              <div className="text-right">
-                <div className="text-[8px] md:text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-1">DATE</div>
-                <div className="font-mono text-sky-500 font-bold text-xs">{exp.period}</div>
+              <div className="text-right flex flex-col justify-start pt-1 shrink-0 ml-2">
+                <div className="text-[8px] md:text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-0.5">DATE</div>
+                <div className="font-mono text-sky-500 font-bold text-[10px] md:text-xs whitespace-nowrap">{exp.period}</div>
               </div>
             </div>
 
-            <div className="relative p-[1.5px] rounded-lg mb-3 z-10 overflow-hidden shadow-[0_0_15px_rgba(14,165,233,0.1)]">
+            <div className="relative p-[2px] rounded-xl mb-4 z-10 overflow-hidden shadow-[0_0_15px_rgba(14,165,233,0.15)] group cursor-default hover:shadow-[0_0_25px_rgba(14,165,233,0.3)] transition-shadow duration-500">
               {/* Spinning glowing border effect */}
-              <div className="absolute inset-[-100%] animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,#0ea5e9_50%,transparent_100%)] opacity-80"></div>
+              <div className="absolute inset-[-100%] animate-[spin_8s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,#0284c7_20%,#38bdf8_50%,#0284c7_80%,transparent_100%)] opacity-60 group-hover:opacity-100 transition-opacity duration-500"></div>
               
               {/* Opaque inner box for perfect text readability */}
-              <div className="relative bg-slate-50 dark:bg-[#0b1120] rounded-lg p-3 h-full w-full">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></div>
-                  <div className="text-[9px] font-mono text-sky-500 uppercase tracking-wider font-bold">MISSION DIRECTIVE</div>
+              <div className="relative bg-slate-50 dark:bg-[#0b1120] rounded-[10px] p-4 h-full w-full">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-[pulse_2s_ease-in-out_infinite] group-hover:shadow-[0_0_8px_#0ea5e9] transition-shadow"></div>
+                  <div className="text-[9px] md:text-[10px] font-mono text-sky-500 uppercase tracking-widest font-semibold">MISSION DIRECTIVE</div>
                 </div>
-                <h3 className="text-xs md:text-sm font-bold text-slate-900 dark:text-white mb-1 leading-tight">{exp.title}</h3>
-                <p className="text-[11px] md:text-xs text-slate-700 dark:text-slate-300 leading-relaxed">{exp.description}</p>
+                <h3 className="text-sm md:text-base font-bold text-slate-900 dark:text-white mb-1.5 leading-tight">{exp.title}</h3>
+                <p className="text-[11px] md:text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-normal">{exp.description}</p>
               </div>
             </div>
 
@@ -118,19 +128,12 @@ const BoardingPassCard = ({ exp, index }: { exp: any, index: number }) => {
               </div>
             )}
 
-            <div className="mt-4 flex justify-between items-end border-t border-slate-100 dark:border-white/5 pt-3 relative z-10">
+            <div className="mt-3 flex justify-between items-end border-t border-slate-100 dark:border-white/5 pt-3 relative z-10">
               <div className="flex items-center gap-2">
-                <img
-                  src={exp.logo}
-                  alt={exp.company}
-                  className="h-6 w-6 object-cover rounded bg-white dark:bg-transparent"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=' + exp.company.charAt(0) + '&background=0ea5e9&color=fff';
-                  }}
-                />
-                <span className="text-xs font-display text-slate-900 dark:text-white font-bold tracking-wide uppercase line-clamp-1">{exp.company}</span>
+                <span className="text-[9px] md:text-[10px] font-mono text-slate-400 uppercase tracking-wider">PASSENGER: </span>
+                <span className="text-[10px] md:text-xs font-display text-slate-800 dark:text-slate-200 font-bold uppercase tracking-wide">Sanjay Gawai</span>
               </div>
-              <div className="text-right text-[8px] font-mono text-slate-400 shrink-0">CLASS: {exp.type.toUpperCase()}</div>
+              <div className="text-right text-[8px] md:text-[9px] font-mono text-slate-400 shrink-0">CLASS: {exp.type.toUpperCase()}</div>
             </div>
           </div>
         </div>
@@ -158,7 +161,7 @@ const ExperienceSection = () => {
       type: 'work',
       title: 'Technical Lead & Operations Head',
       logo: '/placeholder.svg',
-      company: 'RescueClick Pvt. Ltd',
+      company: 'RescueClick',
       period: 'May 2026 – Present',
       location: 'Pune, India',
       description: 'Directing the overall technical strategy, portfolio operations, and engineering lifecycles for all platforms. Architecting proprietary automation infrastructure to optimize deployments and streamline ecosystem scalability.',
@@ -172,7 +175,7 @@ const ExperienceSection = () => {
       type: 'work',
       title: 'Founding Engineer — RingBuzz (Product Lead)',
       logo: '/placeholder.svg',
-      company: 'RescueClick Pvt. Ltd',
+      company: 'RescueClick',
       period: 'May 2026 – Present',
       location: 'Pune, India',
       description: 'Led the design, development, and production deployment of RingBuzz, a real-time virtual economy platform. Engineered the WebRTC call infrastructure and secured the dual-token virtual ledger.',
@@ -186,7 +189,7 @@ const ExperienceSection = () => {
       type: 'work',
       title: 'Founding Engineer — DhanSource (Fintech Product Lead)',
       logo: '/placeholder.svg',
-      company: 'RescueClick Pvt. Ltd',
+      company: 'RescueClick',
       period: 'Oct 2025 – Jun 2026',
       location: 'Pune, India',
       description: 'Built the Channel Partner mobile application for DhanSource Capital from scratch. Standardized automated KYC pipelines and built dynamic PDF contract generation.',
@@ -200,7 +203,7 @@ const ExperienceSection = () => {
       type: 'work',
       title: 'Team Lead',
       logo: '/placeholder.svg',
-      company: 'RescueClick Pvt. Ltd',
+      company: 'RescueClick',
       period: 'Sep 2025 – Oct 2025',
       location: 'Pune, India',
       description: 'Stepped up to coordinate development teams, direct architecture reviews, and oversee sprint deliverables for multi-role workflows and backend systems.',
@@ -213,7 +216,7 @@ const ExperienceSection = () => {
       type: 'work',
       title: 'Full Stack Developer',
       logo: '/placeholder.svg',
-      company: 'RescueClick Pvt. Ltd',
+      company: 'RescueClick',
       period: 'Aug 2025 – Sep 2025',
       location: 'Pune, India',
       description: 'Transitioned to full-stack execution, building clean responsive management panels and integrating client interfaces with scalable backend layers.',
@@ -226,7 +229,7 @@ const ExperienceSection = () => {
       type: 'work',
       title: 'Backend Engineer',
       logo: '/placeholder.svg',
-      company: 'RescueClick Pvt. Ltd',
+      company: 'RescueClick',
       period: 'Aug 2025',
       location: 'Pune, India',
       description: 'Joined as a backend engineer to design database schemas, write scalable REST APIs, and implement secure JWT authentication systems.',
@@ -249,7 +252,7 @@ const ExperienceSection = () => {
       type: 'work',
       title: 'Full Stack Software Engineer',
       logo: '/careersurvival.jpeg',
-      company: 'Career Survival Japan',
+      company: 'Career Survival',
       period: 'Jan 2024 – Aug 2025',
       location: 'Remote',
       description: 'Delivered production-grade applications for Japanese B2B clients. Managed end-to-end SDLC including requirements gathering, architecture, and cloud deployment.',
@@ -274,7 +277,7 @@ const ExperienceSection = () => {
       type: 'work',
       title: 'Frontend Developer',
       logo: '/placeholder.svg',
-      company: 'Code Inbound LLP',
+      company: 'Code Inbound',
       period: 'Jun 2023 – Sep 2023',
       location: 'Remote',
       description: 'Worked on frontend development for NMS (Network Monitoring System) dashboards and monitoring interfaces. Implemented reusable UI components and API integrations using React.js.',

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Sun, Moon } from 'lucide-react';
-import { useTheme } from '../contexts/ThemeContext';
+import { Sun, Moon, CloudRain, Snowflake, CloudOff, SunMedium } from 'lucide-react';
+import { useTheme, Weather } from '../contexts/ThemeContext';
 
 const navLinks = [
   { label: 'HOME', href: '/' },
@@ -14,8 +14,9 @@ const navLinks = [
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isWeatherMenuOpen, setIsWeatherMenuOpen] = useState(false);
   const location = useLocation();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, weather, setWeather } = useTheme();
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 60);
@@ -45,29 +46,31 @@ const Navigation = () => {
     <>
       <nav
         className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center ${isScrolled
-          ? 'top-4 md:top-6 w-[92%] md:w-[800px] glass-panel rounded-[50px] px-2.5 py-2.5'
+          ? 'top-4 md:top-6 w-[95%] max-w-[1100px] glass-panel rounded-[50px] px-4 py-2.5'
           : 'top-0 w-full max-w-7xl bg-transparent px-6 py-6'
           }`}
       >
-        <div className="w-full flex items-center justify-between">
+        <div className="w-full flex items-center justify-between relative">
 
-          {/* Logo (Left Circle) */}
-          <Link to="/" className="flex-shrink-0 group">
-            <div className={`flex items-center justify-center rounded-full transition-all duration-500 bg-gradient-to-r from-coral to-cyber shadow-lg overflow-hidden border-[1.5px] border-white/20 ${isScrolled ? 'w-10 h-10' : 'w-12 h-12'
-              }`}>
-              <img 
-                src="/profile-img.png" 
-                alt="Sanjay Gawai" 
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/profile.png';
-                }}
-              />
-            </div>
-          </Link>
+          {/* Left: Logo */}
+          <div className="flex flex-1 justify-start">
+            <Link to="/" className="flex-shrink-0 group">
+              <div className={`flex items-center justify-center rounded-full transition-all duration-500 bg-slate-900 shadow-[0_0_15px_rgba(14,165,233,0.4)] overflow-hidden border-[2.5px] border-sky-500 ${isScrolled ? 'w-10 h-10' : 'w-12 h-12'
+                }`}>
+                <img 
+                  src="/profile.png" 
+                  alt="Sanjay Gawai" 
+                  className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/profile.png';
+                  }}
+                />
+              </div>
+            </Link>
+          </div>
 
-          {/* Desktop Nav Links (Center) */}
-          <div className="hidden md:flex items-center gap-10">
+          {/* Center: Desktop Nav Links */}
+          <div className="hidden lg:flex flex-shrink-0 items-center justify-center gap-4 xl:gap-8">
             {navLinks.map((link) => (
               link.href.startsWith('#') ? (
                 <button
@@ -91,8 +94,41 @@ const Navigation = () => {
             ))}
           </div>
 
-          {/* Desktop CTA (Right Pill) & Theme Toggle */}
-          <div className="hidden md:flex items-center gap-4">
+          {/* Right: Desktop CTA & Toggles */}
+          <div className="flex-1 flex justify-end items-center gap-3 xl:gap-4 hidden lg:flex">
+            {/* Weather Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsWeatherMenuOpen(!isWeatherMenuOpen)}
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 shadow-md border ${isScrolled ? 'bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-white/10' : 'bg-white/10 dark:bg-slate-900/10 border-white/20 dark:border-white/10 backdrop-blur-md'} hover:scale-105 active:scale-95 text-slate-800 dark:text-white`}
+                aria-label="Toggle weather"
+              >
+                {weather === 'summer' && <SunMedium size={18} className="text-amber-500 fill-amber-300" />}
+                {weather === 'winter' && <Snowflake size={18} className="text-sky-500" />}
+                {weather === 'rainy' && <CloudRain size={18} className="text-indigo-500" />}
+                {weather === 'clear' && <CloudOff size={18} className="text-slate-500" />}
+              </button>
+
+              {/* Weather Menu */}
+              {isWeatherMenuOpen && (
+                <div className="absolute top-14 right-0 bg-white/90 dark:bg-[#0a0a0a]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl p-2 flex flex-col gap-1 w-40 transform origin-top-right animate-in fade-in zoom-in-95 duration-200">
+                  <div className="px-3 py-2 border-b border-slate-100 dark:border-white/5 mb-1">
+                    <span className="font-mono text-[9px] text-slate-500 uppercase tracking-widest">ENVIRONMENT</span>
+                  </div>
+                  
+                  <button onClick={() => { setWeather('summer'); setIsWeatherMenuOpen(false); }} className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors font-display text-xs tracking-wider ${weather === 'summer' ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}>
+                    <SunMedium size={14} className="text-amber-500" /> Summer Flare
+                  </button>
+                  <button onClick={() => { setWeather('rainy'); setIsWeatherMenuOpen(false); }} className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors font-display text-xs tracking-wider ${weather === 'rainy' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}>
+                    <CloudRain size={14} className="text-indigo-500" /> Overcast Rain
+                  </button>
+                  <button onClick={() => { setWeather('winter'); setIsWeatherMenuOpen(false); }} className={`flex items-center gap-3 px-3 py-2 rounded-xl transition-colors font-display text-xs tracking-wider ${weather === 'winter' ? 'bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5'}`}>
+                    <Snowflake size={14} className="text-sky-500" /> Arctic Snow
+                  </button>
+                </div>
+              )}
+            </div>
+
             {/* Highly Animated Creative Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -166,7 +202,7 @@ const Navigation = () => {
           </div>
 
           {/* Mobile toggle group */}
-          <div className="flex md:hidden items-center gap-3">
+          <div className="flex lg:hidden items-center gap-3">
             {/* Mobile Round Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -206,7 +242,7 @@ const Navigation = () => {
 
       {/* Mobile overlay */}
       <div
-        className={`fixed inset-0 z-40 md:hidden transition-all duration-500 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        className={`fixed inset-0 z-40 lg:hidden transition-all duration-500 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           }`}
       >
         <div className="absolute inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-lg" />

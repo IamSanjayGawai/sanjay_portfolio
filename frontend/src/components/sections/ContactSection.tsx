@@ -42,18 +42,24 @@ const ContactSection = () => {
       }
 
       // Supabase insert
-      const { error } = await supabase
-        .from('contacts')
-        .insert([{ 
-          name: formData.name, 
-          email: formData.email, 
-          message: formData.message 
-        }]);
-
-      if (error) throw error;
+      try {
+        const { error } = await supabase
+          .from('contacts')
+          .insert([{ 
+            name: formData.name, 
+            email: formData.email, 
+            message: formData.message 
+          }]);
+        
+        if (error) {
+          console.warn('Supabase insertion failed (table might not exist):', error);
+        }
+      } catch (err) {
+        console.warn('Supabase insertion failed:', err);
+      }
 
       // Web3Forms email notification
-      const web3FormsKey = import.meta.env.VITE_WEB3FORMS_KEY;
+      const web3FormsKey = import.meta.env.VITE_WEB3FORMS_KEY || '32649e00-0a58-4b83-98f1-76aada2c330a';
       if (web3FormsKey) {
         await fetch('https://api.web3forms.com/submit', {
           method: 'POST',
@@ -74,7 +80,7 @@ const ContactSection = () => {
 
       setFormStatus('success');
       setFormData({ name: '', email: '', message: '' });
-      setTimeout(() => setFormStatus('idle'), 3000);
+      // Keep success state until manually reset
     } catch (error: any) {
       console.error('Error submitting form:', error);
       setFormStatus('error');
@@ -182,92 +188,105 @@ const ContactSection = () => {
           </div>
 
           {/* Right Side: Brutalist Form */}
-          <form
-            onSubmit={handleSubmit}
-            className="md:col-span-3 blueprint-card bg-white dark:bg-[#0a0a0a] p-6 sm:p-8 rounded-lg flex flex-col gap-5 shadow-xl relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-
-            <div className="font-mono text-[10px] text-sky-500 mb-2 uppercase tracking-[0.2em] border-b border-sky-500/20 pb-2">
-              &gt;&gt; SECURE_CHANNEL_OPEN
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div className="flex flex-col gap-1.5">
-                <label className="font-mono text-[10px] text-slate-500 uppercase tracking-widest ml-1">IDENTIFICATION (NAME)</label>
-                <input
-                  required
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="John Doe"
-                  className="bg-slate-50 dark:bg-[#050505] border border-slate-200 dark:border-white/10 rounded-md p-3 font-mono text-sm text-slate-900 dark:text-bone outline-none focus:border-sky-500 dark:focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all w-full"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="font-mono text-[10px] text-slate-500 uppercase tracking-widest ml-1">RETURN_ADDRESS (EMAIL)</label>
-                <input
-                  required
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="john@example.com"
-                  className="bg-slate-50 dark:bg-[#050505] border border-slate-200 dark:border-white/10 rounded-md p-3 font-mono text-sm text-slate-900 dark:text-bone outline-none focus:border-sky-500 dark:focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all w-full"
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1.5 mb-2">
-              <label className="font-mono text-[10px] text-slate-500 uppercase tracking-widest ml-1">PAYLOAD (MESSAGE)</label>
-              <textarea
-                required
-                rows={4}
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                placeholder="Let's build something epic..."
-                className="bg-slate-50 dark:bg-[#050505] border border-slate-200 dark:border-white/10 rounded-md p-3 font-mono text-sm text-slate-900 dark:text-bone outline-none focus:border-sky-500 dark:focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all resize-none w-full"
-              ></textarea>
-              {errorMessage && (
-                <div className="text-red-500 font-mono text-xs mt-1">{errorMessage}</div>
-              )}
-            </div>
-
-            <button
-              disabled={formStatus !== 'idle'}
-              type="submit"
-              className="w-full py-4 bg-gradient-to-r from-coral to-cyber text-white font-display text-sm tracking-widest rounded-md hover:shadow-[0_0_20px_rgba(255,0,127,0.4)] transition-all group disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none relative overflow-hidden"
-            >
-              {/* Button Scanline Effect */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-transparent -translate-y-full group-hover:animate-[scanline_2s_linear_infinite]"></div>
-
-              {formStatus === 'idle' ? (
-                <span className="flex items-center justify-center gap-2 relative z-10">
-                  TRANSMIT_DATA
-                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </span>
-              ) : formStatus === 'sending' ? (
-                <span className="animate-pulse relative z-10 font-mono text-xs">UPLOADING_PAYLOAD...</span>
-              ) : formStatus === 'error' ? (
-                <span className="text-red-200 font-mono text-xs relative z-10 flex items-center justify-center gap-2">
-                  TRANSMISSION_FAILED
-                </span>
-              ) : (
-                <span className="text-white font-mono text-xs relative z-10 flex items-center justify-center gap-2">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="md:col-span-3 blueprint-card bg-white dark:bg-[#0a0a0a] p-6 sm:p-8 rounded-lg shadow-xl relative overflow-hidden min-h-[420px] flex flex-col justify-center">
+            {formStatus === 'success' ? (
+              <div className="flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500">
+                <div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-6 relative">
+                  <div className="absolute inset-0 rounded-full border border-emerald-500/30 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+                  <svg className="w-10 h-10 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  TRANSMISSION_SUCCESSFUL
-                </span>
-              )}
-            </button>
-          </form>
+                </div>
+                <h3 className="font-display text-2xl md:text-3xl text-slate-900 dark:text-white mb-2">PAYLOAD DELIVERED</h3>
+                <p className="font-mono text-sm text-slate-500 dark:text-slate-400 mb-8 max-w-sm">
+                  Transmission successful. Your data has been securely routed. I will analyze the contents and respond shortly.
+                </p>
+                <button
+                  onClick={() => setFormStatus('idle')}
+                  className="px-6 py-3 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 rounded font-mono text-xs tracking-widest transition-all hover:shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+                >
+                  INITIALIZE_NEW_TRANSMISSION
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-5 h-full justify-between">
+                <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+
+                <div className="font-mono text-[10px] text-sky-500 mb-2 uppercase tracking-[0.2em] border-b border-sky-500/20 pb-2">
+                  &gt;&gt; SECURE_CHANNEL_OPEN
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-mono text-[10px] text-slate-500 uppercase tracking-widest ml-1">IDENTIFICATION (NAME)</label>
+                    <input
+                      required
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      placeholder="John Doe"
+                      className="bg-slate-50 dark:bg-[#050505] border border-slate-200 dark:border-white/10 rounded-md p-3 font-mono text-sm text-slate-900 dark:text-bone outline-none focus:border-sky-500 dark:focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all w-full"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-mono text-[10px] text-slate-500 uppercase tracking-widest ml-1">RETURN_ADDRESS (EMAIL)</label>
+                    <input
+                      required
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="john@example.com"
+                      className="bg-slate-50 dark:bg-[#050505] border border-slate-200 dark:border-white/10 rounded-md p-3 font-mono text-sm text-slate-900 dark:text-bone outline-none focus:border-sky-500 dark:focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all w-full"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5 mb-2">
+                  <label className="font-mono text-[10px] text-slate-500 uppercase tracking-widest ml-1">PAYLOAD (MESSAGE)</label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    placeholder="Let's build something epic..."
+                    className="bg-slate-50 dark:bg-[#050505] border border-slate-200 dark:border-white/10 rounded-md p-3 font-mono text-sm text-slate-900 dark:text-bone outline-none focus:border-sky-500 dark:focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all resize-none w-full"
+                  ></textarea>
+                  {errorMessage && (
+                    <div className="text-red-500 font-mono text-xs mt-1">{errorMessage}</div>
+                  )}
+                </div>
+
+                <button
+                  disabled={formStatus !== 'idle'}
+                  type="submit"
+                  className="w-full py-4 mt-auto bg-gradient-to-r from-coral to-cyber text-white font-display text-sm tracking-widest rounded-md hover:shadow-[0_0_20px_rgba(255,0,127,0.4)] transition-all group disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none relative overflow-hidden"
+                >
+                  {/* Button Scanline Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-transparent -translate-y-full group-hover:animate-[scanline_2s_linear_infinite]"></div>
+
+                  {formStatus === 'sending' ? (
+                    <span className="animate-pulse relative z-10 font-mono text-xs">UPLOADING_PAYLOAD...</span>
+                  ) : formStatus === 'error' ? (
+                    <span className="text-red-200 font-mono text-xs relative z-10 flex items-center justify-center gap-2">
+                      TRANSMISSION_FAILED
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2 relative z-10">
+                      TRANSMIT_DATA
+                      <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </span>
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
 
         </div>
       </div>

@@ -176,26 +176,34 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
         {isReady ? (
           <button
             onClick={handleEnterWorld}
-            className="text-white font-mono text-lg sm:text-xl font-bold tracking-[0.3em] uppercase bg-sky-500/20 hover:bg-sky-500/40 transition-all duration-300 backdrop-blur-sm px-8 py-3 rounded-full border border-sky-400 shadow-[0_0_30px_rgba(14,165,233,0.4)] hover:shadow-[0_0_50px_rgba(14,165,233,0.8)] hover:scale-105 cursor-pointer"
+            className="text-white font-mono text-lg sm:text-xl font-bold tracking-[0.3em] uppercase bg-sky-500/20 hover:bg-sky-500/40 transition-all duration-300 backdrop-blur-sm px-8 py-3 rounded-full border border-sky-400 shadow-[0_0_30px_rgba(14,165,233,0.4)] hover:shadow-[0_0_50px_rgba(14,165,233,0.8)] hover:scale-105 cursor-pointer flex items-center gap-3 group"
           >
-            Enter My World
+            <span>INITIALIZE_SYSTEM</span>
+            <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
           </button>
         ) : (
           <div className="text-white font-mono text-lg sm:text-xl font-bold tracking-[0.3em] uppercase bg-white/5 backdrop-blur-sm px-8 py-3 rounded-full border border-white/10 shadow-[0_0_30px_rgba(255,255,255,0.05)] opacity-50 pointer-events-none">
-            Initializing...
+            Booting Core...
           </div>
         )}
 
         {!isReady && (
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-48 h-1 bg-slate-800 rounded-full overflow-hidden">
+          <div className="flex flex-col items-center gap-2 mt-4">
+            <div className="w-64 h-1 bg-slate-800 rounded-full overflow-hidden relative">
               <div
-                className="h-full bg-sky-500 transition-all duration-300 ease-out"
+                className="h-full bg-sky-500 transition-all duration-300 ease-out shadow-[0_0_10px_rgba(14,165,233,0.8)]"
                 style={{ width: progress + '%' }}
               />
             </div>
-            <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-              Downloading Assets {progress}%
+            <div className="text-[10px] sm:text-xs font-mono text-sky-400/80 uppercase tracking-widest mt-2">
+              {progress < 25 && ">> ESTABLISHING SECURE PROTOCOLS..."}
+              {progress >= 25 && progress < 50 && ">> COMPILING PRODUCT ECOSYSTEM..."}
+              {progress >= 50 && progress < 75 && ">> SYNCHRONIZING CLOUD INFRASTRUCTURE..."}
+              {progress >= 75 && progress < 100 && ">> LOADING NEXT-GEN EXPERIENCES..."}
+              {progress === 100 && ">> SYSTEM FULLY OPERATIONAL"}
+              <span className="ml-2 text-white">[{progress}%]</span>
             </div>
           </div>
         )}

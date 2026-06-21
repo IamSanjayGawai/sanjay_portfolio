@@ -14,6 +14,9 @@ const HeroSection = () => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
+    let svgTimeline: gsap.core.Timeline | null = null;
+    let observer: IntersectionObserver | null = null;
+
     const ctx = gsap.context(() => {
       // — Typing animation for roles —
       const roles = ['Technical Lead', 'Founding Engineer', 'Full-Stack Architect', 'Real-Time Systems Developer'];
@@ -48,130 +51,14 @@ const HeroSection = () => {
         .fromTo('.hero-desc', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.6 }, '-=0.3')
         .fromTo('.hero-cta', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5 }, '-=0.2')
         .add(() => {
-          // 3D Flight Timeline
-          // The plane loops endlessly, waiting 5.5s at the start of each loop
-          const flight = gsap.timeline({ repeat: -1 });
-
-          // Wait for path to exist, then get its length
-          const checkPath = setInterval(() => {
-            const pathEl = document.getElementById('visual-flight-path') as unknown as SVGPathElement;
-            if (pathEl && pathEl.getTotalLength) {
-              clearInterval(checkPath);
-
-              const w = window.innerWidth;
-
-              // Double Landing Pendulum Flight Path
-              const alt = -150;
-              const retAlt = -250;
-              const rightOffscreen = w + 400; // Off-screen right
-              const leftOffscreen = -2000;    // Off-screen left
-              const runwayLeft = -800;        // Start of runway
-              const runwayRight = 0;          // End of runway
-
-              // 1. Takeoff Right: 0 to rightOffscreen
-              // 2. U-turn Right
-              // 3. Approach Left: rightOffscreen to 800
-              // 4. Land Left: 800 to 0
-              // 5. Roll Left: 0 to -800
-              // 6. Takeoff Left: -800 to leftOffscreen
-              // 7. U-turn Left
-              // 8. Approach Right: leftOffscreen to -1400
-              // 9. Land Right: -1400 to -800
-              // 10. Roll Right: -800 to 0
-              const pathStr = `M ${runwayRight},0 
-                  C 300,0 500,${alt} 800,${alt}
-                  L ${rightOffscreen},${alt}
-                  C ${rightOffscreen + 400},${alt} ${rightOffscreen + 400},${retAlt} ${rightOffscreen},${retAlt}
-                  L 800,${retAlt}
-                  C 400,${retAlt} 200,0 ${runwayRight},0
-                  L ${runwayLeft},0
-                  C -1100,0 -1300,${alt} -1600,${alt}
-                  L ${leftOffscreen},${alt}
-                  C ${leftOffscreen - 400},${alt} ${leftOffscreen - 400},${retAlt} ${leftOffscreen},${retAlt}
-                  L -1400,${retAlt}
-                  C -1100,${retAlt} -1000,0 ${runwayLeft},0
-                  L ${runwayRight},0`;
-
-              // Draw the visual path
-              const visualPathEl = document.getElementById('visual-flight-path') as unknown as SVGPathElement;
-              if (visualPathEl) {
-                visualPathEl.setAttribute('d', pathStr);
-                gsap.to(visualPathEl, { opacity: 1, duration: 1.5, delay: 0.5 });
-                const len = visualPathEl.getTotalLength();
-                gsap.set(visualPathEl, { strokeDasharray: len, strokeDashoffset: len });
-                gsap.to(visualPathEl, { strokeDashoffset: 0, duration: 25, ease: 'power1.inOut' });
-              }
-
-              // Calculate exact dynamic timings for the off-screen flips using SVG getTotalLength
-              const measurePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-              const getLen = (d: string) => {
-                measurePath.setAttribute("d", d);
-                return measurePath.getTotalLength();
-              };
-
-              const segRollRight = `M ${runwayLeft},0 L ${runwayRight},0`;
-              const segTakeoffRight = `M ${runwayRight},0 C 300,0 500,${alt} 800,${alt} L ${rightOffscreen},${alt}`;
-              const segUTurnRight = `M ${rightOffscreen},${alt} C ${rightOffscreen + 400},${alt} ${rightOffscreen + 400},${retAlt} ${rightOffscreen},${retAlt}`;
-              const segFlyLandLeft = `M ${rightOffscreen},${retAlt} L 800,${retAlt} C 400,${retAlt} 200,0 ${runwayRight},0`;
-              const segRollLeft = `M ${runwayRight},0 L ${runwayLeft},0`;
-              const segTakeoffLeft = `M ${runwayLeft},0 C -1100,0 -1300,${alt} -1600,${alt} L ${leftOffscreen},${alt}`;
-              const segUTurnLeft = `M ${leftOffscreen},${alt} C ${leftOffscreen - 400},${alt} ${leftOffscreen - 400},${retAlt} ${leftOffscreen},${retAlt}`;
-              const segFlyLandRight = `M ${leftOffscreen},${retAlt} L -1400,${retAlt} C -1100,${retAlt} -1000,0 ${runwayLeft},0`;
-
-              const d1 = getLen(segRollRight);
-              const d2 = getLen(segTakeoffRight);
-              const d3 = getLen(segUTurnRight);
-              const d4 = getLen(segFlyLandLeft);
-              const d5 = getLen(segRollLeft);
-              const d6 = getLen(segTakeoffLeft);
-              const d7 = getLen(segUTurnLeft);
-              const d8 = getLen(segFlyLandRight);
-
-              // Variable speeds (pixels per second)
-              const speedSlow = 120; // Very slow, majestic flight across the screen to read the motto
-              const speedFast = 2500; // Extremely fast off-screen turnaround
-
-              // Calculate durations for each segment based on their physical length
-              const t1 = d1 / speedSlow;
-              const t2 = d2 / speedSlow;
-              const t3 = d3 / speedFast; // U-turn right
-              const t4 = d4 / speedSlow;
-              const t5 = d5 / speedSlow;
-              const t6 = d6 / speedSlow;
-              const t7 = d7 / speedFast; // U-turn left
-              const t8 = d8 / speedSlow;
-
-              // Chain the sequential path animations
-              // Wait 15s at start (0,0) before taking off
-              flight.to('.hero-badge', { motionPath: { path: segTakeoffRight, autoRotate: true }, duration: t2, ease: 'none', delay: 15 })
-
-                // Right U-turn (Fast)
-                .addLabel("rightUTurn")
-                .to('.hero-badge', { motionPath: { path: segUTurnRight, autoRotate: true }, duration: t3, ease: 'none' }, "rightUTurn")
-                // Trigger flip instantly at start of fast U-turn
-                .to('.hero-badge', { rotationX: 180, duration: 0.1, ease: 'none' }, "rightUTurn")
-                .to('.animate-wave-flag', { scaleX: -1, duration: 0.1, ease: 'none' }, "rightUTurn")
-
-                .to('.hero-badge', { motionPath: { path: segFlyLandLeft, autoRotate: true }, duration: t4, ease: 'none' })
-                .to('.hero-badge', { motionPath: { path: segRollLeft, autoRotate: true }, duration: t5, ease: 'none' })
-                .to('.hero-badge', { motionPath: { path: segTakeoffLeft, autoRotate: true }, duration: t6, ease: 'none' })
-
-                // Left U-turn (Fast)
-                .addLabel("leftUTurn")
-                .to('.hero-badge', { motionPath: { path: segUTurnLeft, autoRotate: true }, duration: t7, ease: 'none' }, "leftUTurn")
-                // Trigger flip instantly at start of fast U-turn
-                .to('.hero-badge', { rotationX: 360, duration: 0.1, ease: 'none' }, "leftUTurn")
-                .to('.animate-wave-flag', { scaleX: 1, duration: 0.1, ease: 'none' }, "leftUTurn")
-
-                .to('.hero-badge', { motionPath: { path: segFlyLandRight, autoRotate: true }, duration: t8, ease: 'none' })
-
-                // Finally, roll right back to 0,0 to complete the loop
-                .to('.hero-badge', { motionPath: { path: segRollRight, autoRotate: true }, duration: t1, ease: 'none' });
-
-              // Reset rotationX to 0 at the end of the timeline so it loops cleanly
-              flight.set('.hero-badge', { rotationX: 0 });
-            }
-          }, 100);
+          // Gentle hovering animation for the steady plane
+          gsap.to('.hero-badge', {
+            y: -10,
+            duration: 2,
+            ease: 'power1.inOut',
+            yoyo: true,
+            repeat: -1
+          });
         });
 
       // — SVG Stroke Draw Animation —
@@ -201,10 +88,10 @@ const HeroSection = () => {
         gsap.set(dataPulses, { opacity: 0 });
 
         // Create the timeline
-        const svgTl = gsap.timeline({ delay: 0.8 });
+        svgTimeline = gsap.timeline({ delay: 0.8 });
 
         // Step 1: Scale in the central hub (with 'SDLC' text) first
-        svgTl.to(hubNode, {
+        svgTimeline.to(hubNode, {
           scale: 1,
           opacity: 1,
           duration: 0.6,
@@ -213,7 +100,7 @@ const HeroSection = () => {
 
         // Draw web rings concurrently
         rings.forEach((ring) => {
-          svgTl.to(ring, {
+          svgTimeline.to(ring, {
             strokeDashoffset: 0,
             duration: 1.0,
             ease: 'power2.out',
@@ -226,14 +113,14 @@ const HeroSection = () => {
           const targetNode = svgRef.current?.querySelector(`.outer-node-${nodeNum}`);
 
           // Spoke line grows outward
-          svgTl.to(spoke, {
+          svgTimeline.to(spoke, {
             strokeDashoffset: 0,
             duration: 0.4,
             ease: 'power1.inOut',
           });
 
           // Outer node scales in
-          svgTl.to(targetNode, {
+          svgTimeline.to(targetNode, {
             scale: 1,
             opacity: 1,
             duration: 0.4,
@@ -242,7 +129,7 @@ const HeroSection = () => {
         });
 
         // Step 3: Pulsing data dots
-        svgTl.to(dataPulses, {
+        svgTimeline.to(dataPulses, {
           opacity: 0.3,
           duration: 0.5,
           stagger: 0.05,
@@ -259,40 +146,69 @@ const HeroSection = () => {
       }
     }, heroRef);
 
-    return () => ctx.revert();
+    // ── Intersection Observer to pause SVG animations offscreen ──
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          svgTimeline?.play();
+        } else {
+          svgTimeline?.pause();
+        }
+      });
+    }, { threshold: 0.05 });
+
+    if (heroRef.current) observer.observe(heroRef.current);
+
+    return () => {
+      if (observer) observer.disconnect();
+      ctx.revert();
+    };
   }, []);
 
   return (
-    <div ref={heroRef} className="relative min-h-screen flex items-center overflow-hidden bg-transparent transition-colors duration-1000">
-      {/* --- Minimal Sun / Moon Ambient Lighting & Clouds --- */}
+    <div ref={heroRef} className="relative min-h-[90vh] md:min-h-screen flex items-start pt-20 sm:pt-28 lg:pt-30 overflow-hidden bg-transparent transition-colors duration-1000">
+      {/* --- Minimal Sun / Moon Ambient Lighting & Upper Clouds --- */}
       <div className="absolute inset-0 z-0 overflow-visible pointer-events-none transition-all duration-1000">
-        {/* Top Left Cloud (Hanging from ceiling) - hidden in dark mode */}
-        <div className="absolute top-0 left-0 w-[80%] md:w-[50%] flex justify-start opacity-100 dark:opacity-0 transition-opacity duration-700 z-0 pointer-events-none">
-          <img src="/cloude2.png" alt="Cloud" className="w-full h-auto object-contain transform drop-shadow-2xl" style={{ transform: 'scaleY(-1) scaleX(1.1)' }} />
+
+        {/* UPPER CLOUDS (Dense & Borderless) */}
+        <div
+          className={`absolute top-[-10%] sm:top-[-15%] left-0 w-full h-[50vh] flex transition-opacity duration-700 pointer-events-none mix-blend-normal ${theme === 'dark' ? 'opacity-0' : 'opacity-80'}`}
+          style={{ maskImage: 'radial-gradient(50% 50% at 50% 50%, black 40%, transparent 100%)', WebkitMaskImage: 'radial-gradient(50% 50% at 50% 50%, black 40%, transparent 100%)' }}
+        >
+          {/* Layer 1 (Background large) */}
+          <img src="/cloude2.png" alt="Upper Cloud" className="absolute top-0 left-[-10%] w-[80%] h-auto object-cover opacity-40 blur-[4px] scale-[1.5]" />
+          <img src="/cloude2.png" alt="Upper Cloud" className="absolute top-[10%] right-[-20%] w-[90%] h-auto object-cover opacity-30 blur-[6px] scale-[1.8] scale-x-[-1]" />
+
+          {/* Layer 2 (Midground crisp) */}
+          <img src="/cloude2.png" alt="Upper Cloud" className="absolute top-[5%] left-[10%] w-[60%] md:w-[40%] h-auto object-cover opacity-70 scale-[1.2]" />
+          <img src="/cloude2.png" alt="Upper Cloud" className="absolute top-[15%] right-[5%] w-[70%] md:w-[50%] h-auto object-cover opacity-60 scale-[1.3] scale-x-[-1]" />
+
+          {/* Layer 3 (Foreground wisps) */}
+          <img src="/cloude2.png" alt="Upper Cloud" className="absolute top-[20%] left-[30%] w-[40%] h-auto object-cover opacity-80 blur-[2px] scale-[1.1]" />
         </div>
 
         {theme === 'light' ? (
           <>
             {/* Minimal Day Glow: Right */}
-            <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 w-[500px] h-[500px] bg-yellow-400/10 rounded-full blur-[100px]" />
+            <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 w-[500px] h-[500px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(250, 204, 21, 0.15) 0%, transparent 70%)' }} />
             {/* Minimal Day Glow: Left */}
-            <div className="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 w-[400px] h-[400px] bg-orange-400/5 rounded-full blur-[100px]" />
+            <div className="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 w-[400px] h-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(251, 146, 60, 0.08) 0%, transparent 70%)' }} />
           </>
         ) : (
           <>
             {/* Minimal Night Glow: Right */}
-            <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px]" />
+            <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/4 w-[500px] h-[500px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)' }} />
             {/* Minimal Night Glow: Left */}
-            <div className="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px]" />
+            <div className="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 w-[400px] h-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)' }} />
           </>
         )}
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full relative z-10 pt-24 pb-12 sm:pt-28 sm:pb-16">
-        <div className="grid md:grid-cols-5 gap-8 lg:gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 w-full relative pb-12 sm:pb-16">
+        <div className="grid md:grid-cols-5 gap-8 lg:gap-12 items-start">
 
-          {/* ── Left Column (3/5 width) ── */}
-          <div className="md:col-span-3 relative z-20 flex flex-col items-center md:items-start text-center md:text-left mt-8 md:mt-0">
+          {/* ── Left Column (3/5 width) - High z-index to stay above clouds ── */}
+          <div className="md:col-span-3 relative z-30 flex flex-col items-center md:items-start text-center md:text-left -mt-4 sm:-mt-8">
 
             {/* Visual Flight Path Container — hidden */}
             <div className="absolute top-[60px] sm:top-[70px] left-[200px] sm:left-[280px] w-full h-full pointer-events-none z-0 hidden">
@@ -360,7 +276,7 @@ const HeroSection = () => {
 
                 {/* Waving Flag */}
                 <div
-                  className="animate-wave-flag relative flex items-center justify-start px-3 sm:px-4 py-2 border-y border-l border-coral/50 bg-coral/10 backdrop-blur-md shadow-[0_0_15px_rgba(255,87,51,0.2)] min-w-[160px] sm:min-w-[240px]"
+                  className="animate-wave-flag relative flex items-center justify-start px-3 sm:px-4 py-2 border-y border-l border-coral/50 bg-slate-800/95 min-w-[160px] sm:min-w-[240px]"
                   style={{ clipPath: 'polygon(10% 0%, 100% 0%, 100% 100%, 10% 100%, 0% 50%)' }}
                 >
                   {/* Pole / string attachment edge */}
@@ -398,8 +314,21 @@ const HeroSection = () => {
             </div>
 
             {/* Name Presentation */}
-            <div className="hero-headline opacity-0 mb-4 sm:mb-6 -mt-2 md:-mt-4 relative group cursor-default w-full">
-              <h1 className="font-display font-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.1] tracking-widest uppercase text-slate-900 dark:text-white transition-transform duration-500 hover:scale-[1.02]">
+            <div className="hero-headline opacity-0 mb-4 sm:mb-6 -mt-2 md:-mt-4 relative group cursor-default w-full flex flex-row items-center justify-center md:justify-start gap-4 sm:gap-6">
+              {/* Profile Picture */}
+              <div className="flex-shrink-0">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-[4px] sm:border-[5px] border-sky-500 overflow-hidden shadow-[0_0_30px_rgba(14,165,233,0.5)] group-hover:border-sky-400 group-hover:shadow-[0_0_40px_rgba(14,165,233,0.7)] transition-all duration-500">
+                  <img
+                    src="/profile.png"
+                    alt="Sanjay Gawai"
+                    className="w-full h-full object-cover object-top transition-transform duration-700 hover:scale-110"
+                  />
+                  {/* Subtle overlay */}
+                  <div className="absolute inset-0 bg-sky-500/5 mix-blend-overlay pointer-events-none"></div>
+                </div>
+              </div>
+
+              <h1 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-5xl leading-[1.1] tracking-widest uppercase text-slate-900 dark:text-white transition-transform duration-500 hover:scale-[1.02] text-left">
                 Sanjay <br className="block sm:hidden" /><span className="inline-block text-sky-500 dark:text-sky-400 drop-shadow-[0_0_15px_rgba(14,165,233,0.4)]">Gawai.</span>
               </h1>
             </div>
@@ -407,7 +336,7 @@ const HeroSection = () => {
             {/* Description */}
             <div className="hero-desc opacity-0 relative mb-8 sm:mb-10 w-full flex justify-center md:justify-start">
               {/* Subtle brutalist accent line */}
-              <div className="absolute top-1 bottom-1 left-0 md:-left-4 w-1 bg-gradient-to-b from-coral to-cyber/50 rounded-full hidden md:block" />
+              <div className="absolute top-1 bottom-1 left-0 md:-left-4 w-1 bg-gradient-to-b from-coral to-cyber/50 hidden md:block" />
               <p className="font-body text-[14px] sm:text-[15px] md:text-[16px] text-slate-600 dark:text-slate-300 leading-relaxed max-w-md md:pl-2 text-center md:text-left">
                 End-to-end, from scratch, in production —
                 I architect high-scale platforms, direct technical strategy, and lead the engineering teams that ship them.
@@ -417,7 +346,7 @@ const HeroSection = () => {
             </div>
 
             {/* CTA Buttons */}
-            <div className="hero-cta opacity-0 flex flex-col sm:flex-row flex-wrap justify-center md:justify-start gap-4 mt-2 sm:mt-6 w-full">
+            <div className="hero-cta opacity-0 flex flex-col sm:flex-row flex-wrap justify-center md:justify-start gap-4 mt-6 sm:mt-6 w-full">
 
               <style>{`
                 @keyframes shineSweep {
@@ -437,8 +366,8 @@ const HeroSection = () => {
 
               <button
                 onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-                className="magnetic group relative px-8 py-4 premium-btn text-white rounded-full overflow-hidden transition-all duration-500 shadow-[0_0_20px_rgba(14,165,233,0.2)] hover:shadow-[0_0_40px_rgba(14,165,233,0.6)] border border-slate-700 hover:border-sky-500"
-                style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600, fontSize: '15px', letterSpacing: '0.15em' }}
+                className="magnetic group relative px-4 sm:px-8 py-3.5 sm:py-4 premium-btn text-white overflow-hidden transition-all duration-500 shadow-[0_0_20px_rgba(14,165,233,0.2)] hover:shadow-[0_0_40px_rgba(14,165,233,0.6)] border border-slate-700 hover:border-sky-500 w-full sm:w-auto flex-shrink-0"
+                style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600, fontSize: '14px', letterSpacing: '0.1em' }}
               >
                 {/* Glowing Aura Background on Hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-sky-500/20 via-sky-400/20 to-sky-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -446,10 +375,10 @@ const HeroSection = () => {
                 {/* Metallic Shine Sweep */}
                 <div className="absolute top-0 bottom-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shineSweep_1.5s_infinite_linear]" style={{ transform: 'skewX(-15deg)' }} />
 
-                <span className="relative z-10 flex items-center justify-center gap-3">
-                  <span className="w-2 h-2 rounded-full bg-sky-500 group-hover:bg-sky-400 animate-pulse transition-colors duration-300 shadow-[0_0_8px_rgba(14,165,233,0.8)]" />
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300 group-hover:to-white transition-all">LAUNCH SYSTEMS</span>
-                  <span className="text-sky-500 group-hover:text-sky-400 transition-all duration-300 group-hover:translate-x-1.5 font-light">→</span>
+                <span className="relative z-10 flex items-center justify-center gap-2 sm:gap-3">
+                  <span className="w-2 h-2 rounded-full bg-sky-500 group-hover:bg-sky-400 animate-pulse transition-colors duration-300 shadow-[0_0_8px_rgba(14,165,233,0.8)] flex-shrink-0" />
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-300 group-hover:to-white transition-all whitespace-normal sm:whitespace-nowrap text-center">LAUNCH SYSTEMS</span>
+                  <span className="text-sky-500 group-hover:text-sky-400 transition-all duration-300 group-hover:translate-x-1.5 font-light flex-shrink-0">→</span>
                 </span>
               </button>
 
@@ -457,187 +386,89 @@ const HeroSection = () => {
                 href="/Sanjay_Gawai_Resume14.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="magnetic px-8 py-3.5 border border-sky-500/50 dark:border-sky-500/30 text-sky-600 dark:text-sky-400 rounded-full hover:bg-sky-50 dark:hover:bg-sky-500/10 transition-all text-center flex items-center justify-center gap-2 backdrop-blur-sm"
-                style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600, fontSize: '14px', letterSpacing: '0.15em' }}
+                className="magnetic w-full sm:w-auto px-4 sm:px-8 py-3 sm:py-3.5 border border-sky-500/50 dark:border-sky-500/30 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-500/10 transition-all text-center flex items-center justify-center gap-2 backdrop-blur-sm flex-shrink-0"
+                style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 600, fontSize: '14px', letterSpacing: '0.1em' }}
               >
                 VIEW RESUME <span className="opacity-70">↗</span>
               </a>
             </div>
           </div>
 
-          {/* ── Right Column (2/5 width) — SVG Blueprint ── */}
-          <div className="md:col-span-2 flex justify-center items-center w-full mt-10 md:mt-0">
-            <svg
-              ref={svgRef}
-              viewBox="0 0 500 500"
-              className="w-full max-w-[260px] sm:max-w-[320px] md:max-w-md lg:max-w-lg xl:max-w-xl aspect-square drop-shadow-2xl"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+          {/* ── Right Column (2/5 width) — Celestial Body (Sun/Moon) - Low z-index to stay behind clouds ── */}
+          <div className="md:col-span-2 flex justify-center items-center w-full mt-10 md:mt-16 lg:mt-24 h-[300px] md:h-[400px] relative z-10 overflow-visible">
+            {/* 
+              --- SDLC SVG DIAGRAM (COMMENTED OUT) ---
+              <svg ref={svgRef} viewBox="0 0 500 500" className="w-full max-w-[260px] sm:max-w-[320px] md:max-w-md lg:max-w-lg xl:max-w-xl aspect-square drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+                ... (original SVG code preserved in Git history)
+              </svg>
+            */}
+
+            {/* Realistic Sun Object */}
+            <div
+              className={`absolute w-40 h-40 sm:w-56 sm:h-56 rounded-full transition-all duration-[30000ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] transform flex items-center justify-center
+                ${theme === 'light' ? 'translate-y-0 opacity-100 rotate-0 scale-100' : 'translate-y-[200px] opacity-0 rotate-90 scale-50 pointer-events-none'}`}
             >
-              <defs>
-                {/* Sun */}
-                <radialGradient id="planet-sun" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#ffff00" />
-                  <stop offset="60%" stopColor="#ff8800" />
-                  <stop offset="100%" stopColor="#cc0000" />
-                </radialGradient>
+              {/* Sun Core (Pulses between light and orange) */}
+              <div
+                className={`absolute inset-0 rounded-full ${theme === 'light' ? 'animate-sun-color-shift' : ''}`}
+                style={{
+                  background: '#ffffff',
+                  boxShadow: '0 0 120px #ffffff, 0 0 180px rgba(253, 224, 71, 0.5)'
+                }}
+              />
 
-                {/* Mercury */}
-                <radialGradient id="planet-mercury" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#ffffff" />
-                  <stop offset="40%" stopColor="#cbd5e1" />
-                  <stop offset="80%" stopColor="#64748b" />
-                  <stop offset="100%" stopColor="#1e293b" />
-                </radialGradient>
+              {/* Sun Corona / Blinding Rays (Fades dynamically) */}
+              <div className={`absolute inset-[-20%] rounded-full bg-white/60 blur-[15px] animate-pulse mix-blend-screen pointer-events-none ${theme === 'light' ? 'animate-rays-fade' : 'opacity-0'}`} style={{ animationDuration: '3s' }} />
+              <div className={`absolute inset-[-50%] rounded-full bg-yellow-100/30 blur-[25px] animate-pulse mix-blend-screen pointer-events-none ${theme === 'light' ? 'animate-rays-fade' : 'opacity-0'}`} style={{ animationDuration: '7s', animationDelay: '1s' }} />
+              <div className={`absolute inset-[-100%] rounded-full bg-amber-200/10 blur-[40px] mix-blend-screen pointer-events-none ${theme === 'light' ? 'animate-rays-fade' : 'opacity-0'}`} />
 
-                {/* Venus */}
-                <radialGradient id="planet-venus" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#ffffff" />
-                  <stop offset="40%" stopColor="#fed7aa" />
-                  <stop offset="80%" stopColor="#c2410c" />
-                  <stop offset="100%" stopColor="#431407" />
-                </radialGradient>
+              {/* Core intense glow */}
+              <div className={`absolute inset-0 rounded-full bg-white blur-[5px] mix-blend-screen pointer-events-none ${theme === 'light' ? 'animate-rays-fade' : 'opacity-0'}`} />
+            </div>
 
-                {/* Earth */}
-                <radialGradient id="planet-earth" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#ffffff" />
-                  <stop offset="40%" stopColor="#bae6fd" />
-                  <stop offset="80%" stopColor="#0284c7" />
-                  <stop offset="100%" stopColor="#0f172a" />
-                </radialGradient>
+            {/* Realistic Moon Object (Pure CSS) */}
+            <div
+              className={`absolute w-40 h-40 sm:w-56 sm:h-56 rounded-full transition-all duration-[30000ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] transform flex items-center justify-center
+                ${theme === 'dark' ? 'translate-y-[-40px] opacity-100 rotate-0 scale-100' : 'translate-y-[200px] opacity-0 -rotate-90 scale-50 pointer-events-none'}`}
+              style={{
+                background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #f8fafc 40%, #e2e8f0 80%, #cbd5e1 100%)',
+                boxShadow: '0 0 80px rgba(255, 255, 255, 0.6), 0 0 150px rgba(255, 255, 255, 0.3), inset -10px -10px 25px rgba(15, 23, 42, 0.2), inset 10px 10px 20px rgba(255, 255, 255, 1)'
+              }}
+            >
+              {/* Subtle moon surface crater texture */}
+              <div className="absolute top-[20%] left-[20%] w-[30%] h-[30%] rounded-full bg-slate-400/20 blur-[5px]" />
+              <div className="absolute bottom-[30%] right-[25%] w-[40%] h-[40%] rounded-full bg-slate-500/15 blur-[8px]" />
+              <div className="absolute top-[60%] left-[15%] w-[25%] h-[25%] rounded-full bg-slate-400/20 blur-[4px]" />
 
-                {/* Mars */}
-                <radialGradient id="planet-mars" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#ffffff" />
-                  <stop offset="40%" stopColor="#fecdd3" />
-                  <stop offset="80%" stopColor="#be123c" />
-                  <stop offset="100%" stopColor="#4c0519" />
-                </radialGradient>
+              {/* Moon Glow Halo */}
+              <div className="absolute inset-[-40%] rounded-full bg-white/20 blur-[30px] mix-blend-screen pointer-events-none animate-pulse" style={{ animationDuration: '4s' }} />
+            </div>
 
-                {/* Jupiter */}
-                <radialGradient id="planet-jupiter" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#ffffff" />
-                  <stop offset="40%" stopColor="#fef08a" />
-                  <stop offset="80%" stopColor="#a16207" />
-                  <stop offset="100%" stopColor="#422006" />
-                </radialGradient>
-
-                {/* Saturn */}
-                <radialGradient id="planet-saturn" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#ffffff" />
-                  <stop offset="40%" stopColor="#e2e8f0" />
-                  <stop offset="80%" stopColor="#475569" />
-                  <stop offset="100%" stopColor="#0f172a" />
-                </radialGradient>
-
-                {/* Uranus */}
-                <radialGradient id="planet-uranus" cx="30%" cy="30%" r="70%">
-                  <stop offset="0%" stopColor="#ffffff" />
-                  <stop offset="40%" stopColor="#ccfbf1" />
-                  <stop offset="80%" stopColor="#0f766e" />
-                  <stop offset="100%" stopColor="#042f2e" />
-                </radialGradient>
-              </defs>
-              {/* 1. Connection lines (Spokes) */}
-              <path className="spoke spoke-1" d="M250 250 L250 80" stroke="#38bdf8" strokeWidth="2.5" />
-              <path className="spoke spoke-2" d="M250 250 L383 144" stroke="#0ea5e9" strokeWidth="2.5" />
-              <path className="spoke spoke-3" d="M250 250 L416 288" stroke="#38bdf8" strokeWidth="2.5" />
-              <path className="spoke spoke-4" d="M250 250 L324 403" stroke="#0ea5e9" strokeWidth="2.5" />
-              <path className="spoke spoke-5" d="M250 250 L176 403" stroke="#38bdf8" strokeWidth="2.5" />
-              <path className="spoke spoke-6" d="M250 250 L84 288" stroke="#0ea5e9" strokeWidth="2.5" />
-              <path className="spoke spoke-7" d="M250 250 L117 144" stroke="#38bdf8" strokeWidth="2.5" />
-
-              {/* 2. Outer rings (spider-web style) */}
-              <circle className="web-ring" cx="250" cy="250" r="170" stroke="#38bdf8" strokeWidth="1" opacity="0.4" strokeDasharray="6,6" />
-              <circle className="web-ring" cx="250" cy="250" r="110" stroke="#0ea5e9" strokeWidth="1" opacity="0.3" strokeDasharray="6,6" />
-
-              {/* 3. Outer Nodes (Planets) */}
-              {/* Node 1: PLANNING (Strategy) — Top */}
-              <g className="outer-node outer-node-1">
-                <circle cx="250" cy="80" r="48" stroke="rgba(255,255,255,0.4)" strokeWidth="1" fill="url(#planet-mercury)" />
-                <text x="250" y="74" textAnchor="middle" fill="#0f172a" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', fontWeight: 800 }}>PLANNING</text>
-                <text x="250" y="92" textAnchor="middle" fill="#334155" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', fontWeight: 600 }}>(STRATEGY)</text>
-              </g>
-
-              {/* Node 2: ANALYSIS (Requirements) — Top-Right */}
-              <g className="outer-node outer-node-2">
-                <circle cx="383" cy="144" r="48" stroke="rgba(255,255,255,0.4)" strokeWidth="1" fill="url(#planet-venus)" />
-                <text x="383" y="138" textAnchor="middle" fill="#0f172a" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', fontWeight: 800 }}>ANALYSIS</text>
-                <text x="383" y="156" textAnchor="middle" fill="#334155" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', fontWeight: 600 }}>(SPECS)</text>
-              </g>
-
-              {/* Node 3: DESIGN (Architecture) — Right */}
-              <g className="outer-node outer-node-3">
-                <circle cx="416" cy="288" r="48" stroke="rgba(255,255,255,0.4)" strokeWidth="1" fill="url(#planet-earth)" />
-                <text x="416" y="282" textAnchor="middle" fill="#0f172a" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', fontWeight: 800 }}>DESIGN</text>
-                <text x="416" y="300" textAnchor="middle" fill="#334155" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', fontWeight: 600 }}>(SYSTEM)</text>
-              </g>
-
-              {/* Node 4: IMPLEMENTATION (Coding) — Bottom-Right */}
-              <g className="outer-node outer-node-4">
-                <circle cx="324" cy="403" r="48" stroke="rgba(255,255,255,0.4)" strokeWidth="1" fill="url(#planet-mars)" />
-                <text x="324" y="397" textAnchor="middle" fill="#0f172a" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', fontWeight: 800 }}>IMPLEMENT</text>
-                <text x="324" y="415" textAnchor="middle" fill="#334155" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '10px', fontWeight: 600 }}>(CODEBASE)</text>
-              </g>
-
-              {/* Node 5: TESTING (QA) — Bottom-Left */}
-              <g className="outer-node outer-node-5">
-                <circle cx="176" cy="403" r="48" stroke="rgba(255,255,255,0.4)" strokeWidth="1" fill="url(#planet-jupiter)" />
-                <text x="176" y="397" textAnchor="middle" fill="#0f172a" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', fontWeight: 800 }}>TESTING</text>
-                <text x="176" y="415" textAnchor="middle" fill="#334155" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', fontWeight: 600 }}>(QA)</text>
-              </g>
-
-              {/* Node 6: DEPLOYMENT (Release) — Left */}
-              <g className="outer-node outer-node-6">
-                <ellipse cx="84" cy="288" rx="65" ry="12" fill="none" stroke="rgba(253,230,138,0.2)" strokeWidth="4" transform="rotate(-15 84 288)" />
-                <circle cx="84" cy="288" r="48" stroke="rgba(255,255,255,0.4)" strokeWidth="1" fill="url(#planet-saturn)" />
-                <text x="84" y="282" textAnchor="middle" fill="#0f172a" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', fontWeight: 800 }}>DEPLOY</text>
-                <text x="84" y="300" textAnchor="middle" fill="#334155" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', fontWeight: 600 }}>(RELEASE)</text>
-              </g>
-
-              {/* Node 7: MAINTENANCE (Support) — Top-Left */}
-              <g className="outer-node outer-node-7">
-                <ellipse cx="117" cy="144" rx="8" ry="65" fill="none" stroke="rgba(165,243,252,0.2)" strokeWidth="2" transform="rotate(20 117 144)" />
-                <circle cx="117" cy="144" r="48" stroke="rgba(255,255,255,0.4)" strokeWidth="1" fill="url(#planet-uranus)" />
-                <text x="117" y="138" textAnchor="middle" fill="#0f172a" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', fontWeight: 800 }}>MAINTAIN</text>
-                <text x="117" y="156" textAnchor="middle" fill="#334155" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '10px', fontWeight: 600 }}>(SUPPORT)</text>
-              </g>
-
-              {/* 4. Central Hub (Dynamic Sun/Moon) */}
-              <g className="hub-node">
-                {theme === 'light' ? (
-                  <>
-                    <circle cx="250" cy="250" r="85" fill="#fef08a" opacity="0.4" style={{ filter: 'drop-shadow(0 0 20px #fde047)' }} />
-                    <circle cx="250" cy="250" r="65" stroke="#f59e0b" strokeWidth="3" fill="url(#planet-sun)" />
-                    <circle cx="250" cy="250" r="55" fill="#fcd34d" opacity="0.3" />
-                    <text x="250" y="260" textAnchor="middle" fill="#ffffff" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: 900, letterSpacing: '0.05em', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>SDLC</text>
-                  </>
-                ) : (
-                  <>
-                    <circle cx="250" cy="250" r="75" fill="#e2e8f0" opacity="0.1" style={{ filter: 'drop-shadow(0 0 15px #cbd5e1)' }} />
-                    <circle cx="250" cy="250" r="65" stroke="#94a3b8" strokeWidth="2" fill="#cbd5e1" />
-                    {/* Moon craters */}
-                    <circle cx="265" cy="235" r="8" fill="#94a3b8" opacity="0.4" />
-                    <circle cx="235" cy="265" r="12" fill="#94a3b8" opacity="0.4" />
-                    <circle cx="270" cy="265" r="5" fill="#94a3b8" opacity="0.4" />
-                    <circle cx="225" cy="230" r="4" fill="#94a3b8" opacity="0.4" />
-                    <text x="250" y="260" textAnchor="middle" fill="#0f172a" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '28px', fontWeight: 900, letterSpacing: '0.05em' }}>SDLC</text>
-                  </>
-                )}
-              </g>
-
-              {/* 5. Pulsing data flow dots along spokes */}
-              <circle className="data-pulse" cx="250" cy="156" r="4" fill="#38bdf8" />
-              <circle className="data-pulse" cx="323" cy="192" r="4" fill="#0ea5e9" />
-              <circle className="data-pulse" cx="341" cy="271" r="4" fill="#38bdf8" />
-              <circle className="data-pulse" cx="291" cy="334" r="4" fill="#0ea5e9" />
-              <circle className="data-pulse" cx="209" cy="334" r="4" fill="#38bdf8" />
-              <circle className="data-pulse" cx="159" cy="271" r="4" fill="#0ea5e9" />
-              <circle className="data-pulse" cx="177" cy="192" r="4" fill="#38bdf8" />
-            </svg>
           </div>
         </div>
       </div>
+
+      {/* 3. Massive Sea of Clouds (Covers Sun, sits behind Text) */}
+      <div
+        className={`absolute bottom-[0%] sm:bottom-[10%] left-[-10%] w-[120%] h-[50vh] transition-opacity duration-1000 z-20 pointer-events-none mix-blend-normal ${theme === 'dark' ? 'opacity-0' : 'opacity-100'}`}
+        style={{ maskImage: 'radial-gradient(50% 50% at 50% 50%, black 40%, transparent 100%)', WebkitMaskImage: 'radial-gradient(50% 50% at 50% 50%, black 40%, transparent 100%)' }}
+      >
+        {/* RIGHT SIDE (Massive mix of clouds peaking to hide bottom half of the Sun) */}
+        <img src="/cloud.png" alt="Cloud" className="absolute top-[10%] right-[0%] w-[60%] md:w-[50%] h-auto object-cover opacity-60 blur-[2px] scale-[1.5]" />
+        <img src="/cloude2.png" alt="Cloud" className="absolute top-[25%] right-[-10%] w-[65%] md:w-[55%] h-auto object-cover opacity-100 scale-[1.6]" />
+        <img src="/cloud.png" alt="Cloud" className="absolute top-[40%] right-[5%] w-[60%] md:w-[50%] h-auto object-cover opacity-60 scale-[1.5] scale-x-[-1]" />
+        <img src="/cloude2.png" alt="Cloud" className="absolute top-[50%] right-[-15%] w-[80%] md:w-[70%] h-auto object-cover opacity-100 scale-[1.8] scale-x-[-1]" />
+
+        {/* CENTER (Bridging the gap) */}
+        <img src="/cloud.png" alt="Cloud" className="absolute top-[30%] left-[25%] w-[50%] md:w-[45%] h-auto object-cover opacity-60 scale-[1.4] scale-x-[-1]" />
+        <img src="/cloude2.png" alt="Cloud" className="absolute top-[45%] left-[40%] w-[60%] md:w-[50%] h-auto object-cover opacity-100 scale-[1.3]" />
+
+        {/* LEFT SIDE (Sprawling horizon base) */}
+        <img src="/cloude2.png" alt="Cloud" className="absolute top-[25%] left-[-10%] w-[60%] md:w-[50%] h-auto object-cover opacity-100 blur-[3px] scale-[1.5]" />
+        <img src="/cloud.png" alt="Cloud" className="absolute top-[45%] left-[5%] w-[65%] md:w-[55%] h-auto object-cover opacity-60 scale-[1.4]" />
+        <img src="/cloude2.png" alt="Cloud" className="absolute top-[60%] left-[-15%] w-[75%] md:w-[65%] h-auto object-cover opacity-100 scale-[1.6]" />
+      </div>
+
     </div>
   );
 };
